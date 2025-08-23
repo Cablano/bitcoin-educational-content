@@ -1,19 +1,19 @@
 ---
 name: Il protocollo RGB, dalla teoria alla pratica
 goal: Acquisire le competenze necessarie per comprendere e utilizzare l'RGB
-objectives: 
+Obbiettivi: 
 
   - Comprendere i concetti fondamentali del protocollo RGB
-  - Padroneggiare i principi della convalida lato client e degli impegni Bitcoin
-  - Imparare a creare, gestire e trasferire i contratti RGB
+  - Padroneggiare i principi della validazione lato client e dei Bitcoin commitments
+  - Imparare a creare, gestire e trasferire i smart contracts RGB
   - Come utilizzare un nodo Lightning compatibile con RGB
 
 ---
 # Scoprire il protocollo RGB
 
-Immergetevi nel mondo di RGB, un protocollo progettato per implementare e far rispettare i diritti digitali, sotto forma di contratti e asset, sulla base delle regole di consenso e delle operazioni della blockchain Bitcoin. Questo corso di formazione completo vi guida attraverso le basi tecniche e pratiche di RGB, dai concetti di "Client-side Validation" e "Single-use Seals", all'implementazione di smart contract avanzati.
+Immergetevi nel mondo di RGB, un protocollo progettato per implementare e far rispettare i diritti digitali, sotto forma di contratti e asset, sulla base delle regole di consenso e delle operazioni della blockchain Bitcoin. Questo corso di formazione completo vi guida attraverso le basi tecniche e pratiche di RGB, dai concetti di "Client-side Validation"(validazione lato client) e "Single-use Seals"(sigilli monouso), all'implementazione di smart contract avanzati.
 
-Attraverso un programma strutturato e graduale, scoprirete i meccanismi di convalida lato client, gli impegni deterministici su Bitcoin e i modelli di interazione tra gli utenti. Imparerete a creare, gestire e trasferire i token RGB su Bitcoin o sulla rete Lightning.
+Attraverso un programma strutturato e graduale, scoprirete i meccanismi della Client-side validation, i commitments deterministici su Bitcoin e i modelli di interazione tra gli utenti. Imparerete a creare, gestire e trasferire i token RGB su Bitcoin o sulla rete Lightning.
 
 Se siete sviluppatori, appassionati di Bitcoin o semplicemente curiosi di saperne di più su questa tecnologia, questo corso di formazione vi fornirà gli strumenti e le conoscenze necessarie per padroneggiare RGB e costruire soluzioni innovative su Bitcoin.
 
@@ -30,15 +30,15 @@ Il corso si basa su un seminario dal vivo organizzato da Fulgur'Ventures e tenut
 
 Salve a tutti e benvenuti in questo corso di formazione dedicato a RGB, un sistema di smart contract convalidato lato client che gira su Bitcoin e sulla rete Lightning. La struttura di questo corso è pensata per consentire un'esplorazione approfondita di questo argomento complesso. Ecco come è organizzato il corso:
 
-**Sezione 1: Teoria
+**Sezione 1: Teoria**
 
-La prima sezione è dedicata ai concetti teorici necessari per comprendere i fondamenti della convalida lato client e di RGB. Come scoprirete in questo corso, RGB introduce una serie di concetti tecnici che di solito non si vedono in Bitcoin. In questa sezione troverete anche un glossario che fornisce le definizioni di tutti i termini specifici del protocollo RGB.
+La prima sezione è dedicata ai concetti teorici necessari per comprendere i fondamenti della validazione lato client e di RGB. Come scoprirete in questo corso, RGB introduce una serie di concetti tecnici che di solito non si vedono in Bitcoin. In questa sezione troverete anche un glossario che fornisce le definizioni di tutti i termini specifici del protocollo RGB.
 
-**Sezione 2: Pratica
+**Sezione 2: Pratica**
 
-La seconda sezione si concentrerà sull'applicazione dei concetti teorici visti nella sezione 1. Impareremo a creare e manipolare i contratti RGB. Vedremo anche come programmare con questi strumenti. Queste prime due sezioni sono presentate da Maxim Orlovsky.
+La seconda sezione si concentrerà sull'applicazione dei concetti teorici visti nella sezione 1. Impareremo a creare e manipolare i smart contracts RGB. Vedremo anche come programmare con questi strumenti. Queste prime due sezioni sono presentate da Maxim Orlovsky.
 
-**Sezione 3: Applicazioni
+**Sezione 3: Applicazioni**
 
 La sezione finale è guidata da altri relatori che presentano applicazioni concrete basate su RGB, per evidenziare casi d'uso reali.
 
@@ -82,7 +82,7 @@ Pronto a immergerti nell'universo complesso e affascinante di RGB? Andiamo!
 
 :::video id=f27338bc-4210-4a2e-9b27-30278ed3282c:::
 
-RGB è un protocollo progettato per applicare e far rispettare i diritti digitali (sotto forma di contratti e beni) in modo scalabile e riservato, basandosi sulle regole di consenso e sulle operazioni della blockchain Bitcoin. L'obiettivo di questo primo capitolo è quello di presentare i concetti e la terminologia di base del protocollo RGB, evidenziando in particolare i suoi stretti legami con i concetti di base dell'informatica distribuita, come la convalida lato client e i sigilli monouso.
+RGB è un protocollo progettato per applicare e far rispettare i diritti digitali (sotto forma di contratti e beni) in modo scalabile e riservato, basandosi sulle regole di consenso e sulle operazioni della blockchain Bitcoin. L'obiettivo di questo primo capitolo è quello di presentare i concetti e la terminologia di base del protocollo RGB, evidenziando in particolare i suoi stretti legami con i concetti di base dell'informatica distribuita, come la validazione lato client e i sigilli monouso.
 
 In questo capitolo esploriamo i fondamenti dei **sistemi di consenso distribuito** e vediamo come RGB si inserisce in questa famiglia di tecnologie. Introdurremo anche i principi principali che ci aiutano a capire perché RGB mira a essere estensibile e indipendente dal meccanismo di consenso di Bitcoin, pur affidandosi a esso quando necessario.
 
@@ -91,14 +91,14 @@ In questo capitolo esploriamo i fondamenti dei **sistemi di consenso distribuito
 L'informatica distribuita, una branca specifica dell'informatica, studia i protocolli utilizzati per far circolare ed elaborare le informazioni su una rete di nodi. Insieme, questi nodi e le regole del protocollo costituiscono il cosiddetto sistema distribuito. Tra le proprietà essenziali che caratterizzano un sistema di questo tipo ci sono :
 
 
-- La **capacità di verifica e convalida indipendente** di alcuni dati da parte di ciascun nodo;
+- La **capacità di verifica e validazione indipendente** di alcuni dati da parte di ciascun nodo;
 - La possibilità per i nodi di costruire (a seconda del protocollo) una visione completa o parziale delle informazioni. Queste viste sono gli **stati** del sistema distribuito;
-- L'ordine **cronologico** delle operazioni, in modo che i dati siano registrati in modo affidabile e che ci sia un consenso sulla sequenza degli eventi (sequenza di stati).
+- L'**ordine cronologico** delle operazioni, in modo che i dati siano registrati in modo affidabile e che ci sia un consenso sulla sequenza degli eventi (sequenza di stati).
 
 In particolare, la nozione di **consenso** in un sistema distribuito copre due aspetti:
 
 
-- Riconoscimento della validità** dei cambiamenti di stato (secondo le regole del protocollo);
+- **Riconoscimento della validità** dei cambiamenti di stato (secondo le regole del protocollo);
 - L'**accordo sull'ordine** di questi cambiamenti di stato, che rende impossibile riscrivere o invertire le operazioni convalidate a posteriori (questo è anche noto in Bitcoin come "double-spend protection").
 
 La prima implementazione funzionale e senza permessi di un meccanismo di consenso distribuito è stata introdotta da Satoshi Nakamoto con Bitcoin, grazie all'uso combinato di una struttura di dati blockchain e di un algoritmo Proof-of-Work (PoW). In questo sistema, la credibilità della storia del blocco dipende dalla potenza di calcolo ad esso dedicata dai nodi (minatori). Bitcoin è quindi un importante e storico esempio di sistema di consenso distribuito aperto a tutti (*permissionless*).
@@ -109,31 +109,31 @@ Nel contesto di Bitcoin, conoscete senza dubbio i principi di mining, decentrali
 
 ![RGB-Bitcoin](assets/fr/003.webp)
 
-In seguito, introdurremo anche un termine importante: la nozione di "**stash**", che si riferisce all'insieme dei dati lato client necessari per preservare lo stato di un contratto, dato che questi dati non sono replicati globalmente nella rete. Infine, esamineremo la logica alla base di RGB, un protocollo che sfrutta la convalida lato client, e il motivo per cui integra gli approcci esistenti (blockchain e canali di stato).
+In seguito, introdurremo anche un termine importante: la nozione di "**stash**", che si riferisce all'insieme dei dati lato client necessari per preservare lo stato di un contratto, dato che questi dati non sono replicati globalmente nella rete. Infine, esamineremo la logica alla base di RGB, un protocollo che sfrutta la validazione lato client, e il motivo per cui integra gli approcci esistenti (blockchain e canali di stato).
 
 ### Trilemmi nell'informatica distribuita
 
-Per capire come la convalida lato client e l'RGB affrontino i problemi non risolti da blockchain e Lightning, scopriamo i 3 principali "trilemmi" dell'informatica distribuita:
+Per capire come la validazione lato client e l'RGB affrontino i problemi non risolti da blockchain e Lightning, scopriamo i 3 principali "trilemmi" dell'informatica distribuita:
 
 
-- Scalabilità, decentralizzazione, privacy** ;
-- Teorema CAP** (consistenza, disponibilità, tolleranza partizione) ;
-- Trilemma CIA** (Riservatezza, Integrità, Disponibilità).
+- **Scalabilità, decentralizzazione, privacy** ;
+- Teorema **CAP** (consistenza, disponibilità, tolleranza partizione) ;
+- Trilemma **CIA** (Riservatezza, Integrità, Disponibilità).
 
 #### 1. Scalabilità, decentralizzazione e riservatezza
 
 
-- Blockchain (Bitcoin)**
+- **Blockchain (Bitcoin)**
 
 La blockchain è altamente decentralizzata, ma non è molto scalabile. Inoltre, poiché tutto è in un registro pubblico globale, la riservatezza è limitata. Possiamo cercare di migliorare la riservatezza con tecnologie a conoscenza zero (transazioni riservate, schemi mimblewimble, ecc.), ma la catena pubblica non può nascondere il grafico delle transazioni.
 
 
-- Fulmini/canali di stato**
+- **Lightning/canali di stato**
 
 I canali statali (come la Lightning Network) sono più scalabili e più privati della blockchain, poiché le transazioni avvengono fuori dalla catena. Tuttavia, l'obbligo di annunciare pubblicamente alcuni elementi (transazioni di finanziamento, topologia della rete) e il monitoraggio del traffico di rete possono in parte compromettere la riservatezza. Anche la decentralizzazione ne risente: il routing richiede molto denaro e i nodi principali possono diventare punti di centralizzazione. Questo è proprio il fenomeno che stiamo iniziando a vedere su Lightning.
 
 
-- Convalida lato client (RGB)**
+- **Validazione lato client (RGB)**
 
 Questo nuovo paradigma è ancora più scalabile e più confidenziale, perché non solo possiamo integrare tecniche di proof-of-knowledge a zero rivelazioni, ma non esiste un grafo globale delle transazioni, poiché nessuno possiede l'intero registro. D'altra parte, implica anche un certo compromesso sulla decentralizzazione: l'emittente di uno smart contract può avere un ruolo centrale (come un "contract deployer" in Ethereum). Tuttavia, a differenza della blockchain, con la Client-side Validation si memorizzano e si convalidano solo i contratti a cui si è interessati, il che migliora la scalabilità evitando di dover scaricare e verificare tutti gli stati esistenti.
 
@@ -144,17 +144,17 @@ Questo nuovo paradigma è ancora più scalabile e più confidenziale, perché no
 Il teorema CAP sottolinea che è impossibile per un sistema distribuito soddisfare simultaneamente la coerenza (*Consistenza*), la disponibilità (*Disponibilità*) e la tolleranza alle partizioni (*Tolleranza alle partizioni*).
 
 
-- Blockchain**
+- **Blockchain**
 
 La blockchain favorisce la coerenza e la disponibilità, ma non si adatta bene alla suddivisione della rete: se non si può vedere un blocco, non si può agire e avere la stessa visione dell'intera rete.
 
 
-- Fulmine** (in francese)
+- **Lightning** 
 
 Un sistema di canali di stato ha una tolleranza alla disponibilità e al partizionamento (poiché due nodi possono rimanere connessi tra loro anche se la rete è frammentata), ma la coerenza complessiva dipende dall'apertura e dalla chiusura dei canali sulla blockchain.
 
 
-- Convalida lato client (RGB)**
+- **Validazione lato client (RGB)**
 
 Un sistema come RGB offre coerenza (ogni partecipante convalida i propri dati a livello locale, senza ambiguità) e tolleranza al partizionamento (si conservano i dati in modo autonomo), ma non garantisce la disponibilità globale (ognuno deve assicurarsi di avere i pezzi di storia rilevanti, e alcuni partecipanti potrebbero non pubblicare nulla o smettere di condividere certe informazioni).
 
@@ -176,14 +176,14 @@ La blockchain (in questo caso, Bitcoin) serve principalmente come meccanismo di 
 
 Lo sharding è un concetto nato nei database distribuiti (ad esempio MySQL per i social network come Facebook o Twitter). Per risolvere il problema del volume dei dati e delle latenze di sincronizzazione, il database viene segmentato in _shard_ (USA, Europa, Asia, ecc.). Ogni segmento è coerente a livello locale e solo parzialmente sincronizzato con gli altri.
 
-Per gli smart contract di tipo RGB, gli shard vengono suddivisi in base ai contratti stessi. Ogni contratto è uno _shard_ indipendente. Ad esempio, se si possiedono solo token USDT, non è necessario memorizzare o convalidare l'intera storia di un altro token come USDC. Su Bitcoin, la blockchain non fa _sharding_: si ha un insieme globale di UTXO. Con la convalida lato client, ogni partecipante conserva solo i dati del contratto che detiene o utilizza.
+Per gli smart contract di tipo RGB, gli shard vengono suddivisi in base ai contratti stessi. Ogni contratto è uno _shard_ indipendente. Ad esempio, se si possiedono solo token USDT, non è necessario memorizzare o convalidare l'intera storia di un altro token come USDC. Su Bitcoin, la blockchain non fa _sharding_: si ha un insieme globale di UTXO. Con la validazione lato client, ogni partecipante conserva solo i dati del contratto che detiene o utilizza.
 
 Possiamo quindi immaginare l'ecosistema come segue:
 
 
-- La blockchain (Bitcoin)** come base che assicura la replica completa di un registro minimo e serve come livello di marcatura temporale;
-- Lightning Network** per transazioni rapide e riservate, sempre basate sulla sicurezza e sul regolamento finale della blockchain Bitcoin;
-- RGB e Client-side Validation** per aggiungere una logica smart contract più complessa, senza ingombrare la blockchain o perdere la riservatezza.
+- **La blockchain (Bitcoin)** come base che assicura la replica completa di un registro minimo e serve come livello di marcatura temporale;
+- **Lightning Network** per transazioni rapide e riservate, sempre basate sulla sicurezza e sul regolamento finale della blockchain Bitcoin;
+- **RGB e Client-side Validation** per aggiungere una logica smart contract più complessa, senza ingombrare la blockchain o perdere la riservatezza.
 
 ![RGB-Bitcoin](assets/fr/007.webp)
 
@@ -193,13 +193,13 @@ Questi tre elementi formano un insieme triangolare, piuttosto che una pila linea
 
 ### La nozione di transizioni di stato
 
-In qualsiasi sistema distribuito, l'obiettivo del meccanismo di convalida è quello di essere in grado di **determinare la validità e l'ordine cronologico dei cambiamenti di stato**. L'obiettivo è verificare che le regole del protocollo siano state rispettate e dimostrare che questi cambiamenti di stato si susseguono in un ordine definitivo e inattaccabile.
+In qualsiasi sistema distribuito, l'obiettivo del meccanismo di validazione è quello di essere in grado di **determinare la validità e l'ordine cronologico dei cambiamenti di stato**. L'obiettivo è verificare che le regole del protocollo siano state rispettate e dimostrare che questi cambiamenti di stato si susseguono in un ordine definitivo e inattaccabile.
 
-Per capire come funziona questa convalida nel contesto di **Bitcoin** e, più in generale, per comprendere la filosofia che sta alla base della Client-side Validation, diamo prima uno sguardo ai meccanismi della blockchain di Bitcoin, prima di vedere come la Client-side Validation si differenzia da essi e quali ottimizzazioni rende possibili.
+Per capire come funziona questa validazione nel contesto di **Bitcoin** e, più in generale, per comprendere la filosofia che sta alla base della Client-side Validation, diamo prima uno sguardo ai meccanismi della blockchain di Bitcoin, prima di vedere come la Client-side Validation si differenzia da essi e quali ottimizzazioni rende possibili.
 
 ![RGB-Bitcoin](assets/fr/009.webp)
 
-Nel caso della blockchain Bitcoin, la convalida delle transazioni si basa su una semplice regola:
+Nel caso della blockchain Bitcoin, la validazione delle transazioni si basa su una semplice regola:
 
 
 - Tutti i nodi della rete scaricano ogni blocco e transazione;
@@ -211,14 +211,14 @@ Nel caso della blockchain Bitcoin, la convalida delle transazioni si basa su una
 Tuttavia, questo modello presenta due svantaggi principali:
 
 
-- Scalabilità**: poiché ogni nodo deve elaborare, verificare e archiviare le transazioni di tutti, esiste un ovvio limite alla capacità di transazione, legato in particolare alla dimensione massima del blocco (1 MB in media su 10 minuti per Bitcoin, esclusi i cookie);
-- Privacy**: tutto viene trasmesso e memorizzato pubblicamente (importi, indirizzi di destinazione, ecc.), il che limita la riservatezza degli scambi.
+- **Scalabilità**: poiché ogni nodo deve elaborare, verificare e archiviare le transazioni di tutti, esiste un ovvio limite alla capacità di transazione, legato in particolare alla dimensione massima del blocco (1 MB in media su 10 minuti per Bitcoin, esclusi i cookie);
+- **Privacy**: tutto viene trasmesso e memorizzato pubblicamente (importi, indirizzi di destinazione, ecc.), il che limita la riservatezza degli scambi.
 
 ![RGB-Bitcoin](assets/fr/012.webp)
 
 In pratica, questo modello funziona per Bitcoin come livello di base (Layer 1), ma può diventare insufficiente per usi più complessi che richiedono contemporaneamente un'elevata velocità di transazione e un certo grado di riservatezza.
 
-La convalida lato client si basa sull'idea opposta: invece di richiedere all'intera rete di convalidare e memorizzare tutte le transazioni, ogni partecipante (client) convaliderà solo la parte della cronologia che lo riguarda:
+La validazione lato client si basa sull'idea opposta: invece di richiedere all'intera rete di convalidare e memorizzare tutte le transazioni, ogni partecipante (client) convaliderà solo la parte della cronologia che lo riguarda:
 
 
 - Quando una persona riceve un bene (o qualsiasi altra proprietà digitale), deve solo conoscere e verificare la catena di operazioni (transizioni di stato) che portano a quel bene e provarne la legittimità;
@@ -226,11 +226,11 @@ La convalida lato client si basa sull'idea opposta: invece di richiedere all'int
 
 ![RGB-Bitcoin](assets/fr/013.webp)
 
-Allo stesso tempo, affinché il resto della rete (o più precisamente il livello sottostante, come Bitcoin) possa bloccare lo stato finale senza vedere i dettagli di questi dati, la convalida lato client si basa sulla nozione di ***impegno***.
+Allo stesso tempo, affinché il resto della rete (o più precisamente il livello sottostante, come Bitcoin) possa bloccare lo stato finale senza vedere i dettagli di questi dati, la validazione lato client si basa sulla nozione di ***commitment***.
 
-Un *impegno* è un impegno crittografico, tipicamente un _hash_ (SHA-256 per esempio) inserito in una transazione Bitcoin, che dimostra che sono stati inseriti dati privati, senza rivelarli.
+Un *commitment* è un impegno crittografico, tipicamente un _hash_ (SHA-256 per esempio) inserito in una transazione Bitcoin, che dimostra che sono stati inseriti dati privati, senza rivelarli.
 
-Grazie a questi _impegni_, possiamo dimostrare:
+Grazie a questi _commitment_, possiamo dimostrare:
 
 
 - L'esistenza dell'informazione (poiché è impegnata in un hash) ;
@@ -242,20 +242,20 @@ In concreto, ecco come funziona una transizione di stato RGB:
 
 
 - Si prepara una nuova transizione di stato (ad esempio il trasferimento di un token RGB);
-- Si genera un impegno crittografico per questa transizione e lo si inserisce in una transazione Bitcoin (questi impegni sono chiamati "*ancore*" nel protocollo RGB);
-- La controparte (il destinatario) recupera la storia lato cliente associata a questo asset e ne convalida la coerenza end-to-end, dalla genesi dello smart contract alla transizione che gli trasmettete.
+- Si genera un commitment crittografico per questa transizione e lo si inserisce in una transazione Bitcoin (questi commitments(impegni) sono chiamati "*anchor*" (ancore) nel protocollo RGB);
+- La controparte (il destinatario) recupera la storia lato cliente associata a questo asset e ne convalida la coerenza end-to-end, dalla genesi dello smart contract alla transizione che gli trasmetti.
 
 ![RGB-Bitcoin](assets/fr/014.webp)
 
-La convalida lato client offre due vantaggi principali:
+La validazione lato client offre due vantaggi principali:
 
 
-- Scalabilità:**
+- **Scalabilità:**
 
 Gli impegni (*commitments*) inclusi nella blockchain sono piccoli (dell'ordine di qualche decina di byte). Ciò garantisce che lo spazio dei blocchi non sia saturo, poiché è necessario includere solo l'hash. Inoltre, consente al protocollo off-chain di evolversi, poiché ogni utente deve memorizzare solo il proprio frammento di storia (il proprio _stash_).
 
 
-- Privacy :**
+- **Privacy :**
 
 Le transazioni stesse (cioè il loro contenuto dettagliato) non sono pubblicate sulla catena. Lo sono solo le loro impronte digitali (*hash*). Pertanto, gli importi, gli indirizzi e la logica del contratto rimangono privati e il destinatario può verificare, localmente, la validità del suo shard ispezionando tutte le transizioni precedenti. Non c'è motivo per il ricevente di rendere pubblici questi dati, se non in caso di controversia o quando è necessaria una prova.
 
@@ -309,11 +309,11 @@ A differenza dei semplici _impegni_ (hash) o dei timestamp, che attestano una da
 Il seguente confronto aiuta a comprendere questo principio:
 
 
-- Impegno crittografico (hash)**: Con una funzione hash, è possibile impegnarsi su un dato (un numero) pubblicando il suo hash. I dati rimangono segreti finché non si rivela la pre-immagine, ma si può dimostrare di conoscerli in anticipo;
-- Timestamp (blockchain)**: Inserendo questo hash nella blockchain, dimostriamo anche di conoscerlo in un momento preciso (quello dell'inclusione in un blocco);
-- Sigillo monouso**: Con i sigilli monouso, facciamo un passo avanti rendendo unico l'impegno. Con un singolo hash, è possibile creare diversi impegni contraddittori in parallelo (il problema del medico che annuncia "*È un maschio*" alla famiglia e "*È una femmina*" nel suo diario personale). Il sigillo monouso elimina questa possibilità collegando l'impegno a un mezzo di prova della pubblicazione, come la blockchain di Bitcoin, in modo che una spesa di UTXO suggelli definitivamente l'impegno. Una volta speso, lo stesso UTXO non può essere speso nuovamente per sostituire l'impegno.
+- **Commitment crittografico (hash)**: Con una funzione hash, è possibile impegnarsi su un dato (un numero) pubblicando il suo hash. I dati rimangono segreti finché non si rivela la pre-immagine, ma si può dimostrare di conoscerli in anticipo;
+- **Timestamp (blockchain)**: Inserendo questo hash nella blockchain, dimostriamo anche di conoscerlo in un momento preciso (quello dell'inclusione in un blocco);
+- **Single-use seal**: Con i sigilli monouso, facciamo un passo avanti rendendo unico l'impegno. Con un singolo hash, è possibile creare diversi impegni contraddittori in parallelo (il problema del medico che annuncia "*È un maschio*" alla famiglia e "*È una femmina*" nel suo diario personale). Il sigillo monouso elimina questa possibilità collegando l'impegno a un mezzo di prova della pubblicazione, come la blockchain di Bitcoin, in modo che una spesa di UTXO suggelli definitivamente l'impegno. Una volta speso, lo stesso UTXO non può essere speso nuovamente per sostituire l'impegno.
 
-|                                                                                  | Impegno semplice (digest/hash) | Timestamp | Sigilli monouso |
+|                                                                                  | Simple commitment (digest/hash) | Timestamp | Single-use seal |
 | -------------------------------------------------------------------------------- | ------------------------------ | --------- | --------------- |
 | La pubblicazione dell'impegno non rivela il messaggio                          | Sì                             | Sì        | Sì              |
 | Prova della data dell'impegno / esistenza del messaggio prima di una certa data | Impossibile                     | Possibile | Possibile       |
@@ -322,7 +322,7 @@ Il seguente confronto aiuta a comprendere questo principio:
 
 I sigilli monouso funzionano in tre fasi principali:
 
-**Definizione di guarnizione :**
+**Definizione del sigillo :**
 
 
 - Alice definisce in anticipo le regole per la pubblicazione del sigillo (quando, dove e come verrà pubblicato il messaggio);
@@ -330,7 +330,7 @@ I sigilli monouso funzionano in tre fasi principali:
 
 ![RGB-Bitcoin](assets/fr/021.webp)
 
-**Chiusura ermetica :**
+**Chiusura del sigillo :**
 
 
 - In fase di esecuzione, Alice chiude il sigillo pubblicando il messaggio effettivo (di solito sotto forma di un _commitment_, ad esempio un hash);
@@ -338,7 +338,7 @@ I sigilli monouso funzionano in tre fasi principali:
 
 ![RGB-Bitcoin](assets/fr/019.webp)
 
-**Verifica della tenuta :**
+**Verifica del sigillo :**
 
 
 - Una volta chiuso il sigillo, Bob non può più aprirlo: può solo verificare che sia stato chiuso;
@@ -347,50 +347,50 @@ I sigilli monouso funzionano in tre fasi principali:
 Il processo può essere riassunto come segue:
 
 ```txt
-# Défini par Alice, validé ou accepté par Bob
+# Definito da Alice, validato e accettato da Bob
 seal <- Define()
-# Fermeture du sceau par Alice avec le message
+# Il sigillo viene chiuso da Alice con il messaggio
 witness <- Close(seal, message)
-# Vérification par Bob
+# Verifica di Bob
 bool <- Verify(seal, witness, message)
 ```
 
-La convalida lato client, tuttavia, fa un ulteriore passo avanti: se la definizione stessa di un sigillo rimane al di fuori della blockchain, è possibile (in teoria) che qualcuno contesti l'esistenza o la legittimità del sigillo in questione. Per superare questo problema, viene utilizzata una catena di sigilli monouso interconnessi:
+La validazione lato client, tuttavia, fa un ulteriore passo avanti: se la definizione stessa di un sigillo rimane al di fuori della blockchain, è possibile (in teoria) che qualcuno contesti l'esistenza o la legittimità del sigillo in questione. Per superare questo problema, viene utilizzata una catena di sigilli monouso interconnessi:
 
 
 - Ogni sigillo chiuso contiene la definizione del sigillo successivo;
-- Registriamo queste chiusure (con i loro _impegni_) all'interno della blockchain (in una transazione Bitcoin);
+- Registriamo queste chiusure (con i loro _commitments_) all'interno della blockchain (in una transazione Bitcoin);
 - Pertanto, qualsiasi tentativo di modificare un sigillo precedente sarebbe in contraddizione con la storia incorporata in Bitcoin.
 
 Questo è esattamente ciò che fa il sistema RGB:
 
 
-- I messaggi pubblicati sono _impegni_ a dati convalidati dal lato client;
-- La definizione di sigillo è associata a un Bitcoin UTXO ;
+- I messaggi pubblicati sono _commitment_ a dati validati lato client;
+- La definizione di sigillo è associata ad un Bitcoin UTXO ;
 - Il sigillo si chiude quando questo UTXO viene speso o quando una nuova uscita viene accreditata allo stesso impegno;
 - La catena di transazioni che spende questi UTXO corrisponde alla prova di pubblicazione: ogni transizione o cambiamento di stato su RGB è quindi ancorato in Bitcoin.
 
 Per riassumere:
 
 
-- La _definizione di sigillo_ è l'UTXO che si intende sigillare per un impegno futuro;
+- La _definizione del sigillo_ è l'UTXO che si intende sigillare per un impegno futuro;
 - La _chiusura del sigillo_ avviene quando si spende questo UTXO, creando una transazione che contiene l'impegno;
 - Il _testimone_ è la transazione stessa, che prova che avete chiuso il sigillo con questo contenuto;
 - Non si può provare che un sigillo non sia stato chiuso (non si può essere assolutamente certi che un UTXO non sia già stato speso o non sarà speso in un blocco che non si è ancora visto), ma si può provare che è stato effettivamente chiuso.
 
-Questa unicità è importante per la convalida lato client: quando si convalida una transizione di stato, si controlla che corrisponda a un UTXO unico, non speso in precedenza in un impegno concorrente. Questo è ciò che garantisce l'assenza di doppie spese negli smart contract off-chain.
+Questa unicità è importante per la validazione lato client: quando si convalida una transizione di stato, si controlla che corrisponda a un UTXO unico, non speso in precedenza in un impegno concorrente. Questo è ciò che garantisce l'assenza di doppie spese negli smart contract off-chain.
 
 ### Molteplici impegni e radici
 
-Uno smart contract RGB può avere bisogno di spendere diversi Single-use Seals (diversi UTXO) contemporaneamente. Inoltre, una singola transazione Bitcoin può fare riferimento a diversi contratti distinti, ognuno dei quali sigilla la propria transizione di stato. Ciò richiede un meccanismo di **multi-commitment** per dimostrare, in modo deterministico e univoco, che nessuno degli impegni esiste in duplice copia. È qui che entra in gioco la nozione di **ancora** in RGB: una struttura speciale che collega una transazione Bitcoin e uno o più impegni lato client (transizioni di stato), ciascuno potenzialmente appartenente a un contratto diverso. Analizzeremo più da vicino questo concetto nel prossimo capitolo.
+Uno smart contract RGB può avere bisogno di spendere diversi Single-use Seals (diversi UTXO) contemporaneamente. Inoltre, una singola transazione Bitcoin può fare riferimento a diversi contratti distinti, ognuno dei quali sigilla la propria transizione di stato. Ciò richiede un meccanismo di **multi-commitment** per dimostrare, in modo deterministico e univoco, che nessuno degli impegni esiste in duplice copia. È qui che entra in gioco la nozione di **anchor (ancora)** in RGB: una struttura speciale che collega una transazione Bitcoin e uno o più impegni lato client (transizioni di stato), ciascuno potenzialmente appartenente a un contratto diverso. Analizzeremo più da vicino questo concetto nel prossimo capitolo.
 
 ![RGB-Bitcoin](assets/fr/023.webp)
 
 Due dei principali repository GitHub del progetto (sotto l'organizzazione LNPBP) raggruppano le implementazioni di base di questi concetti studiati nel primo capitolo:
 
 
-- client_side_validation** : Contiene primitive Rust per la validazione locale ;
-- sigilli_di_uso**: Implementa la logica per definire e chiudere questi sigilli in modo sicuro.
+- **client_side_validation** : Contiene primitive Rust per la validazione locale ;
+- **single_use_seals**: Implementa la logica per definire e chiudere questi sigilli in modo sicuro.
 
 ![RGB-Bitcoin](assets/fr/020.webp)
 
