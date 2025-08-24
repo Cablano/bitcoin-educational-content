@@ -1,7 +1,7 @@
 ---
 name: Il protocollo RGB, dalla teoria alla pratica
 goal: Acquisire le competenze necessarie per comprendere e utilizzare l'RGB
-Obbiettivi: 
+Obiettivi: 
 
   - Comprendere i concetti fondamentali del protocollo RGB
   - Padroneggiare i principi della validazione lato client e dei Bitcoin commitments
@@ -279,7 +279,7 @@ Quando si accetta un bene come una valuta, sono essenziali due garanzie:
 - L'autenticità dell'articolo ricevuto;
 - L'unicità dell'articolo ricevuto, per evitare doppie spese.
 
-Per i beni fisici, come una banconota, la presenza fisica è sufficiente a dimostrare che non è stata duplicata. Tuttavia, nel mondo digitale, dove gli asset sono puramente informativi, questa verifica è più complessa, poiché le informazioni possono facilmente moltiplicarsi ed essere duplicate.
+Per i beni fisici, come una banconota, la presenza fisica è sufficiente a dimostrare che non è stata duplicata. Tuttavia, nel mondo digitale, dove gli asset sono puramente informatici, questa verifica è più complessa, poiché le informazioni possono facilmente moltiplicarsi ed essere duplicate.
 
 Come abbiamo visto in precedenza, la rivelazione da parte del mittente della storia delle transizioni di stato ci permette di garantire l'autenticità di un token RGB. Avendo accesso a tutte le transazioni successive alla transazione genetica, possiamo confermare l'autenticità del token. Questo principio è simile a quello di Bitcoin, dove la storia delle monete può essere rintracciata fino alla transazione originale su coinbase per verificarne la validità. Tuttavia, a differenza di Bitcoin, la storia delle transizioni di stato in RGB è privata e conservata dal lato del cliente.
 
@@ -400,7 +400,7 @@ Si noti che questi mattoni software sono agnostici rispetto a Bitcoin; in teoria
 
 ### Domande del pubblico
 
-#### Verso un uso più ampio delle guarnizioni monouso
+#### Verso un uso più ampio delle Single-use Seal
 
 Peter Todd ha anche creato il protocollo _Open Timestamps_ e il concetto di Single-use Seal è una naturale estensione di queste idee. Oltre a RGB, si possono prevedere altri casi d'uso, come la costruzione di _sidechain_ senza ricorrere al _merge mining_ o proposte legate alle drivechain come BIP300. In linea di principio, qualsiasi sistema che richieda un singolo impegno può sfruttare questa primitiva crittografica. Oggi RGB è la prima grande implementazione su scala reale.
 
@@ -414,41 +414,41 @@ Ogni contratto rappresenta uno _shard_ isolato: USDT e USDC, ad esempio, non dev
 
 ### Conclusione
 
-Abbiamo visto come il concetto di Client-side Validation si inserisca nella blockchain e nei _canali di stato_, come risponda ai trilemmi dell'informatica distribuita e come sfrutti la blockchain Bitcoin in modo unico per evitare la doppia spesa e per il *time-stamping*. L'idea si basa sulla nozione di **Single-use Seal**, che consente di creare impegni unici che non possono essere riutilizzati a piacimento. In questo modo, ogni partecipante carica solo la cronologia strettamente necessaria, aumentando la scalabilità e la riservatezza dei contratti intelligenti e mantenendo la sicurezza di Bitcoin come sfondo.
+Abbiamo visto come il concetto di Client-side Validation si inserisca nella blockchain e nei _canali di stato_, come risponda ai trilemmi dell'informatica distribuita e come sfrutti la blockchain Bitcoin in modo unico per evitare la doppia spesa e per il *time-stamping*. L'idea si basa sulla nozione di **Single-use Seal**, che consente di creare commitment unici che non possono essere riutilizzati a piacimento. In questo modo, ogni partecipante carica solo la cronologia strettamente necessaria, aumentando la scalabilità e la riservatezza degli smart contracts e mantenendo la sicurezza di Bitcoin come sfondo.
 
-Il prossimo passo sarà quello di spiegare in modo più dettagliato come questo meccanismo di Single-use Seal viene applicato in Bitcoin (tramite gli UTXO), come vengono create e convalidate le ancore e quindi come vengono costruiti gli smart contract completi in RGB. In particolare, esamineremo la questione degli impegni multipli, la sfida tecnica di dimostrare che una transazione Bitcoin sigilla simultaneamente più transizioni di stato in contratti diversi, senza introdurre vulnerabilità o doppi impegni.
+Il prossimo passo sarà quello di spiegare in modo più dettagliato come questo meccanismo di Single-use Seal viene applicato in Bitcoin (tramite gli UTXO), come vengono create e convalidate le ancore (anchor) e quindi come vengono costruiti gli smart contract completi in RGB. In particolare, esamineremo la questione degli impegni multipli, la sfida tecnica di dimostrare che una transazione Bitcoin sigilla simultaneamente più transizioni di stato in contratti diversi, senza introdurre vulnerabilità o doppi impegni.
 
-Prima di immergerci nei dettagli tecnici del secondo capitolo, rileggiamo le definizioni chiave (Client-side Validation, Single-use Seal, ancore, ecc.) e teniamo a mente la logica generale: stiamo cercando di conciliare i punti di forza della blockchain Bitcoin (sicurezza, decentralizzazione, time-stamping) con quelli delle soluzioni off-chain (velocità, riservatezza, scalabilità), ed è proprio questo che RGB e Client-side Validation cercano di ottenere.
+Prima di immergerci nei dettagli tecnici del secondo capitolo, rileggiamo le definizioni chiave (Client-side Validation, Single-use Seal, anchor, ecc.) e teniamo a mente la logica generale: stiamo cercando di conciliare i punti di forza della blockchain Bitcoin (sicurezza, decentralizzazione, time-stamping) con quelli delle soluzioni off-chain (velocità, riservatezza, scalabilità), ed è proprio questo che RGB e Client-side Validation cercano di ottenere.
 
-## Il livello di impegno
+## Il commitment layer
 
 <chapterId>cc2fe85a-9cc7-5b8c-a00a-c0a867241061</chapterId>
 
 :::video id=73ddea2d-c243-479d-a3dc-12d7db8eef70:::
 
-In questo capitolo esamineremo l'implementazione della convalida lato client e dei sigilli monouso nella blockchain Bitcoin. Presenteremo i principi principali del **commitment layer** di RGB (layer 1), con particolare attenzione allo schema **TxO2**, che RGB utilizza per definire e chiudere un sigillo in una transazione Bitcoin. Successivamente, discuteremo due punti importanti che non sono ancora stati trattati in dettaglio:
+In questo capitolo esamineremo l'implementazione della validazione lato client e dei Single-use Seal nella blockchain Bitcoin. Presenteremo i principi principali del **commitment layer** di RGB (layer 1), con particolare attenzione allo schema **TxO2**, che RGB utilizza per definire e chiudere un sigillo in una transazione Bitcoin. Successivamente, discuteremo due punti importanti che non sono ancora stati trattati in dettaglio:
 
 
-- Gli _impegni deterministici di Bitcoin_;
-- Impegni multiprotocollo.
+- I _deterministic Bitcoin commitments_;
+- Commitments multiprotocollo.
 
 È la combinazione di questi concetti che ci permette di sovrapporre diversi sistemi o contratti a un unico UTXO e quindi a un'unica blockchain.
 
-Va ricordato che le operazioni crittografiche descritte possono essere applicate, in termini assoluti, ad altre blockchain o supporti editoriali, ma le caratteristiche di Bitcoin (in termini di decentralizzazione, resistenza alla censura e apertura a tutti) lo rendono la base ideale per sviluppare una programmabilità avanzata come quella richiesta da **RGB**.
+Va ricordato che le operazioni crittografiche descritte possono essere applicate, in termini assoluti, ad altre blockchain o media di pubblicazione, ma le caratteristiche di Bitcoin (in termini di decentralizzazione, resistenza alla censura e apertura a tutti) lo rendono la base ideale per sviluppare una programmabilità avanzata come quella richiesta da **RGB**.
 
 ### Schemi di impegno in Bitcoin e loro utilizzo da parte di RGB
 
-Come abbiamo visto nel primo capitolo del corso, i sigilli monouso sono un concetto generale: facciamo una promessa di includere un impegno (_commitment_) in una posizione specifica di una transazione, e questa posizione agisce come un sigillo che chiudiamo su un messaggio. Tuttavia, sulla blockchain Bitcoin, ci sono diverse opzioni per scegliere dove collocare questo _impegno_.
+Come abbiamo visto nel primo capitolo del corso, i sigilli monouso sono un concetto generale: facciamo una promessa di includere un commitment (_commitment_) in una posizione specifica di una transazione, e questa posizione agisce come un sigillo che chiudiamo su un messaggio. Tuttavia, sulla blockchain Bitcoin, ci sono diverse opzioni per scegliere dove collocare questo _commitment_.
 
-Per capire la logica, ricordiamo il principio di base: per chiudere un _sigillo a uso singolo_, spendiamo l'area sigillata inserendo il _commitment_ su un determinato messaggio. In Bitcoin, questo può essere fatto in diversi modi:
+Per capire la logica, ricordiamo il principio di base: per chiudere un _single-use seal_, spendiamo l'area sigillata inserendo il _commitment_ su un determinato messaggio. In Bitcoin, questo può essere fatto in diversi modi:
 
 
-- Utilizzare una chiave pubblica o un indirizzo**
+- **Utilizzare una chiave pubblica o un indirizzo**
 
 Possiamo decidere che una chiave o un indirizzo pubblico specifico sia il _single-use seal_. Non appena questa chiave o indirizzo appare sulla catena in una transazione, significa che il sigillo è stato chiuso con un certo messaggio.
 
 
-- Utilizzare un output di transazione Bitcoin**
+- Utilizzare un output di una **transazione Bitcoin**
 
 Ciò significa che un _sigillo monouso_ è definito come un preciso _outpoint_ (una coppia TXID + numero di uscita). Non appena questo _outpoint_ viene esaurito, il sigillo viene chiuso.
 
@@ -470,8 +470,8 @@ Mentre lavoravamo su RGB, abbiamo identificato almeno 4 modi diversi per impleme
 Non entreremo nel dettaglio di ciascuna di queste configurazioni, poiché in RGB abbiamo scelto di utilizzare **un _outpoint_ come definizione del sigillo**, e di collocare il _commitment_ nell'output della transazione che spende questo _outpoint_. Possiamo quindi introdurre i seguenti concetti per il seguito:
 
 
-- "Definizione del sigillo "** : Un dato _outpoint_ (identificato da TXID + n. uscita) ;
-- "Chiusura del sigillo "**: La transazione che spende questo _outpoint_, in cui viene aggiunto un _commitment_ a un messaggio.
+- **"Definizione del sigillo "** : Un dato _outpoint_ (identificato da TXID + n. uscita) ;
+- **"Chiusura del sigillo "**: La transazione che spende questo _outpoint_, in cui viene aggiunto un _commitment_ a un messaggio.
 
 Questo schema è stato scelto per la sua compatibilità con l'architettura RGB, ma altre configurazioni potrebbero essere utili per usi diversi.
 
@@ -483,7 +483,7 @@ Come promemoria, la definizione di un _single-use seal_ non richiede necessariam
 
 ![RGB-Bitcoin](assets/fr/024.webp)
 
-Il giorno in cui vuole chiudere il sigillo (per segnalare un evento o per ancorare un particolare messaggio), spende questo UTXO in una nuova transazione (questa transazione è spesso chiamata "transazione di testimonianza" (non correlata a _segwit_, è solo il termine che gli diamo). Questa nuova transazione conterrà il _commitment_ al messaggio.
+Il giorno in cui vuole chiudere il sigillo (per segnalare un evento o per ancorare un particolare messaggio), spende questo UTXO in una nuova transazione (questa transazione è spesso chiamata "transazione witness (testimone)" (non correlata a _segwit_, è solo il termine che gli diamo). Questa nuova transazione conterrà il _commitment_ al messaggio.
 
 ![RGB-Bitcoin](assets/fr/025.webp)
 
