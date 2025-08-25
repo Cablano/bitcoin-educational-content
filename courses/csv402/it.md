@@ -522,28 +522,28 @@ Le terze parti non dispongono di queste informazioni. Vedono solo che è stato s
 Per chiarire la struttura, riassumiamo il processo in due operazioni:
 
 
-- Transazione 1**: Contiene la _definizione del sigillo_, cioè il _punto di uscita_ che servirà da sigillo.
+- **Transazione 1**: Contiene la _definizione del sigillo_, cioè il _punto di uscita_ che servirà da sigillo.
 
 ![RGB-Bitcoin](assets/fr/031.webp)
 
 
-- Operazione 2**: Spende questo _outpoint_. Chiude il sigillo e, nella stessa transazione, inserisce il _commitment_ sul messaggio.
+- **Transazione 2**: Spende questo _outpoint_. Chiude il sigillo e, nella stessa transazione, inserisce il _commitment_ sul messaggio.
 
 ![RGB-Bitcoin](assets/fr/033.webp)
 
-Per questo motivo chiamiamo la seconda transazione "transazione del testimone".
+Per questo motivo chiamiamo la seconda transazione "_witness transaction_" (transazione del testimone).
 
 Per illustrare questo aspetto da un altro punto di vista, possiamo rappresentare due strati:
 
 
-- Il livello superiore (blockchain, pubblico)**: tutti vedono la transazione e sanno che è stato speso un _outpoint_;
-- Il livello inferiore (lato client, privato)** : solo Alice (o la persona interessata) sa che questa spesa corrisponde a tale e tal altro messaggio, tramite la prova crittografica e il messaggio che conserva localmente.
+- **Il layer superiore (blockchain, pubblico)**: tutti vedono la transazione e sanno che è stato speso un _outpoint_;
+- **Il layer inferiore (lato client, privato)** : solo Alice (o la persona interessata) sa che questa spesa corrisponde a tale e tal altro messaggio, tramite la prova crittografica e il messaggio che conserva localmente.
 
 ![RGB-Bitcoin](assets/fr/034.webp)
 
-Ma al momento di chiudere il sigillo, si pone il problema di dove inserire l'impegno
+Ma al momento di chiudere il sigillo, si pone il problema di dove inserire il commitment.
 
-Nella sezione precedente, abbiamo brevemente accennato a come il modello di validazione lato client possa essere applicato a RGB e ad altri sistemi. Qui affrontiamo la parte relativa agli **impegni deterministici di Bitcoin** e a come integrarli in una transazione. L'idea è quella di capire perché stiamo cercando di inserire un singolo impegno nella _transazione testimone_, e soprattutto come garantire che non ci possano essere altri impegni concorrenti non rivelati.
+Nella sezione precedente, abbiamo brevemente accennato a come il modello di validazione lato client possa essere applicato a RGB e ad altri sistemi. Qui affrontiamo la parte relativa agli **deterministic Bitcoin commitments**  e a come integrarli in una transazione. L'idea è quella di capire perché stiamo cercando di inserire un singolo impegno nella _witness transaction_, e soprattutto come garantire che non ci possano essere altri commitments concorrenti non rivelati.
 
 ### Luoghi di impegno in una transazione
 
@@ -554,13 +554,13 @@ La _transazione testimone_ spende il famoso UTXO (o _definizione del sigillo_) e
 Qualunque sia il metodo (PkO, TxO2, ecc.), il _commitment_ può essere inserito:
 
 
-- In un ingresso** tramite :
-    - Sigtweak** (modifica la componente `r` della firma ECDSA, simile al principio "Sign-to-contract") ;
-    - Witweak** (i dati del testimone _segregato_ della transazione vengono modificati).
-- In un Output** via :
-    - Keytweak** (la chiave pubblica del destinatario viene "modificata" con il messaggio) ;
-    - Opret** (il messaggio viene inserito in un output non spendibile `OP_RETURN`) ;
-    - Tapret** (o _Taptweak_), che si basa su taproot per inserire l'impegno nella parte di script di una chiave taproot, modificando così la chiave pubblica in modo deterministico.
+- In un **Input** tramite :
+    - **Sigtweak** (modifica la componente `r` della firma ECDSA, simile al principio "Sign-to-contract") ;
+    - **Witweak** (i dati del testimone _segregato_ della transazione vengono modificati).
+- In un **Output** via :
+    - **Keytweak** (la chiave pubblica del destinatario viene "modificata" con il messaggio) ;
+    - **Opret** (il messaggio viene inserito in un output non spendibile `OP_RETURN`) ;
+    - **Tapret** (o _Taptweak_), che si basa su taproot per inserire l'impegno nella parte di script di una chiave taproot, modificando così la chiave pubblica in modo deterministico.
 
 ![RGB-Bitcoin](assets/fr/035.webp)
 
@@ -612,7 +612,7 @@ Un'altra idea, che alcuni protocolli come _inscrizioni ordinali_ hanno messo in 
 
 Inoltre, il testimone è stato progettato per essere potatile in determinati contesti, il che può rendere più complicato avere prove robuste.
 
-***Apertura-ritorno (opret) :***
+***Open-return (opret):***
 
 Molto semplice nel suo funzionamento, un `OP_RETURN' permette di memorizzare un hash o un messaggio in un campo speciale della transazione. Ma è immediatamente rilevabile: tutti vedono che c'è un _commitment_ nella transazione, e può essere censurato o scartato, oltre ad aggiungere output extra. Poiché questo aumenta la trasparenza e le dimensioni, è considerato meno soddisfacente dal punto di vista di una soluzione di validazione lato client.
 
@@ -677,12 +677,12 @@ La prova dell'inclusione e dell'unicità nell'albero della radice si riduce alla
 
 #### Integrazione di Tapret in un percorso di script preesistente
 
-Il secondo scenario riguarda un output `Q` taproot** più complesso, che contiene già diversi script. Ad esempio, abbiamo un albero di 3 script:
+Il secondo scenario riguarda un output `Q` **taproot** più complesso, che contiene già diversi script. Ad esempio, abbiamo un albero di 3 script:
 
 ![RGB-Bitcoin](assets/fr/049.webp)
 
 
-- tH_LEAF(x)` designa la funzione hash normalizzata di uno script foglia.
+- `tH_LEAF(x)` designa la funzione hash normalizzata di uno script foglia.
 - a, B, C` rappresentano gli script già inclusi nella struttura del fittone.
 
 Per aggiungere l'impegno di Tapret, dobbiamo inserire uno *scritto non spendibile* al primo livello dell'albero, spostando gli script esistenti un livello più in basso. Visivamente, l'albero diventa :
@@ -690,8 +690,8 @@ Per aggiungere l'impegno di Tapret, dobbiamo inserire uno *scritto non spendibil
 ![RGB-Bitcoin](assets/fr/050.webp)
 
 
-- tHABC` rappresenta il tag hash del raggruppamento di primo livello `A, B, C`.
-- tHT` rappresenta l'hash dello script corrispondente al `Tapret` a 64 byte.
+- `tHABC` rappresenta il tag hash del raggruppamento di primo livello `A, B, C`.
+- `tHT` rappresenta l'hash dello script corrispondente al `Tapret` a 64 byte.
 
 Secondo le regole del taproot, ogni ramo/foglia deve essere combinato secondo un ordine lessicografico di hash. Ci sono due casi possibili:
 
@@ -1039,9 +1039,9 @@ Uno smart contract in RGB può essere visto come una macchina a stati, definita 
 È importante capire che questi contratti non si limitano al semplice trasferimento di token. Essi possono incorporare un'ampia varietà di applicazioni: dai beni tradizionali (token, azioni, obbligazioni) a meccaniche più complesse (diritti d'uso, termini commerciali, ecc.). A differenza di altre blockchain, dove il codice del contratto è accessibile ed eseguibile da tutti, l'approccio di RGB compartimenta l'accesso e la conoscenza del contratto ai partecipanti ("***partecipanti al contratto***"). Esistono diversi ruoli:
 
 
-- L'emittente** o creatore del contratto, che definisce la Genesi del contratto e le sue variabili iniziali;
-- Parti con diritti** (*proprietà*) o altre capacità di esecuzione ;
-- Osservatori**, potenzialmente limitati a vedere determinate informazioni, ma che non possono attivare modifiche.
+- **L'emittente** o creatore del contratto, che definisce la Genesi del contratto e le sue variabili iniziali;
+- **Parti con diritti** (*proprietà*) o altre capacità di esecuzione ;
+- **Osservatori**, potenzialmente limitati a vedere determinate informazioni, ma che non possono attivare modifiche.
 
 Questa separazione dei ruoli contribuisce alla resistenza alla censura, garantendo che solo le persone autorizzate possano interagire con lo stato contrattuale. Inoltre, dà a RGB la capacità di scalare orizzontalmente: la maggior parte delle convalide avviene al di fuori della blockchain e solo le ancore crittografiche (gli *impegni*) sono iscritte su Bitcoin.
 
@@ -1058,7 +1058,7 @@ Allo stesso tempo, lo **Stato contrattuale** spesso si scompone in due component
 
 
 - Uno **Stato globale**: parte pubblica, potenzialmente osservabile da tutti (a seconda della configurazione);
-- Stati di proprietà**: parti private, assegnate specificamente ai proprietari tramite gli UTXO a cui si fa riferimento nella logica del contratto.
+- **Stati di proprietà**: parti private, assegnate specificamente ai proprietari tramite gli UTXO a cui si fa riferimento nella logica del contratto.
 
 Come vedremo nei capitoli successivi, ogni aggiornamento di stato (*Operazione di contratto*) deve agganciarsi a un _commitment_ di Bitcoin (tramite `Opret` o `Tapret`) e rispettare gli script di *Business Logic* per essere considerato valido.
 
@@ -1094,9 +1094,9 @@ Questa topologia DAG (invece di una semplice catena lineare) riflette la possibi
 I contratti intelligenti in RGB introducono un modello di strumenti digitali al portatore, decentralizzati ma ancorati a Bitcoin per la marcatura temporale e la garanzia dell'ordine delle transazioni. L'esecuzione automatica di questi contratti si basa su :
 
 
-- Uno **Stato del contratto*, che indica la configurazione attuale del contratto (diritti, saldi, variabili, ecc.);
+- Uno **Stato del contratto**, che indica la configurazione attuale del contratto (diritti, saldi, variabili, ecc.);
 - Una **Business Logic** (*Schema*), che definisce quali transizioni sono consentite e come devono essere convalidate;
-- Contract Operations**, che aggiornano questo stato passo dopo passo, grazie agli impegni ancorati alle transazioni Bitcoin.
+- **Contract Operations**, che aggiornano questo stato passo dopo passo, grazie agli impegni ancorati alle transazioni Bitcoin.
 
 Nel prossimo capitolo approfondiremo la rappresentazione concreta di questi ***stati*** e ***transizioni di stato*** a livello off-chain e il loro rapporto con gli UTXO e i Single-use Seals incorporati in Bitcoin. Sarà l'occasione per vedere come la meccanica interna di RGB, basata sulla convalida lato client, riesca a mantenere la coerenza dei contratti intelligenti preservando la riservatezza dei dati.
 
@@ -1163,10 +1163,10 @@ In questo contesto, ecco alcuni richiami alla terminologia:
 
 - Un ***Assignment*** combina :
     - Una ***Definizione di tenuta*** (che punta a un UTXO);
-    - Stati di proprietà**, ovvero i dati legati alla proprietà (ad esempio, la quantità di gettoni trasferiti).
+    - **Stati di proprietà**, ovvero i dati legati alla proprietà (ad esempio, la quantità di gettoni trasferiti).
 - Uno **Stato globale** riunisce le proprietà generali del contratto, visibili a tutti, e garantisce la coerenza globale delle evoluzioni.
 
-Le transizioni di stato**, descritte nel capitolo precedente, sono la forma principale di operazione contrattuale. Fanno riferimento a uno o più stati precedenti (da Genesis o da un'altra transizione di stato) e li aggiornano a un nuovo stato.
+Le **transizioni di stato**, descritte nel capitolo precedente, sono la forma principale di operazione contrattuale. Fanno riferimento a uno o più stati precedenti (da Genesis o da un'altra transizione di stato) e li aggiornano a un nuovo stato.
 
 ![RGB-Bitcoin](assets/fr/063.webp)
 
@@ -1215,9 +1215,9 @@ Facendo riferimento a ogni voce una sola volta e in modo ordinato, si evita che 
 Le transizioni di stato possono quindi essere utilizzate per trasferire la proprietà di un bene da una persona a un'altra. Tuttavia, non sono le uniche operazioni possibili nel protocollo RGB. Il protocollo definisce tre **operazioni di contratto** :
 
 
-- Transizione di stato** ;
-- Genesi** ;
-- Estensione statale**.
+- **Transizione di stato** ;
+- **Genesi** ;
+- **Estensione statale**.
 
 Tra queste, **Genesis** e **State Extension** sono talvolta chiamate "operazioni di generazione di stati*", perché creano nuovi stati senza chiuderne immediatamente alcuno. Questo è un punto molto importante: **Genesi** e **Estensione dello stato** non comportano la chiusura di un sigillo. Piuttosto, definiscono un nuovo sigillo, che deve poi essere speso da una successiva **Transizione di Stato** per essere veramente convalidato nella storia della blockchain.
 
@@ -1238,7 +1238,7 @@ Essendo la prima transazione del contratto, la Genesis non fa riferimento a ness
 
 ### Estensione dello Stato
 
-Le Estensioni di Stato** offrono una funzionalità originale per gli smart contract. Esse consentono di riscattare alcuni diritti digitali (*Valenze*) previsti nella definizione del contratto, senza chiudere immediatamente il sigillo. Il più delle volte si tratta di :
+Le **Estensioni di Stato** offrono una funzionalità originale per gli smart contract. Esse consentono di riscattare alcuni diritti digitali (*Valenze*) previsti nella definizione del contratto, senza chiudere immediatamente il sigillo. Il più delle volte si tratta di :
 
 
 - Problemi di token distribuiti;
@@ -1317,17 +1317,17 @@ Se osserviamo il diagramma precedente, possiamo notare che un'operazione di cont
 Gli elementi del **Nuovo Stato** sono :
 
 
-- Assegnazioni**, in cui sono definiti :
+- **Assegnazioni**, in cui sono definiti :
  - La **definizione della guarnizione**;
  - Lo **Stato di proprietà**.
 - Lo **Stato globale**, che può essere modificato o arricchito ;
-- Valenze**, eventualmente definite in una transizione di stato o in una genesi.
+- **Valenze**, eventualmente definite in una transizione di stato o in una genesi.
 
 Il **vecchio Stato** è referenziato tramite :
 
 
-- Ingressi**, che puntano a *assegnazioni* di transizioni di stato precedenti (non presenti in Genesis);
-- Riscatti**, che si riferiscono a valenze definite in precedenza (solo nelle estensioni di Stato).
+- **Input**, che puntano a *assegnazioni* di transizioni di stato precedenti (non presenti in Genesis);
+- **Riscatti**, che si riferiscono a valenze definite in precedenza (solo nelle estensioni di Stato).
 
 Inoltre, un'Operazione a contratto include campi più generali specifici per l'operazione:
 
@@ -1351,8 +1351,8 @@ Un contratto RGB è quindi identificato da un `ContractId`, derivato dall'`OpId`
 Lo **Stato del contratto** rappresenta l'insieme di informazioni che il protocollo RGB deve tracciare per un determinato contratto. È composto da :
 
 
-- Un singolo Stato globale**: è la parte pubblica e globale del contratto, visibile a tutti;
-- Uno o più Stati di proprietà**: ogni Stato di proprietà è associato a un sigillo unico (e quindi a un UTXO su Bitcoin). Si distingue tra :
+- Un **singolo Stato globale**: è la parte pubblica e globale del contratto, visibile a tutti;
+- **Uno o più Stati di proprietà**: ogni Stato di proprietà è associato a un sigillo unico (e quindi a un UTXO su Bitcoin). Si distingue tra :
     - Gli Stati **pubblici**,
     - Gli Stati **privati**.
 
@@ -1363,8 +1363,8 @@ Lo *Stato globale* è direttamente incluso nell'*Operazione contratto* come bloc
 Una caratteristica importante di RGB è il modo in cui vengono modificati lo Stato globale e gli Stati posseduti. Esistono generalmente due tipi di comportamento:
 
 
-- Mutevole**: quando un elemento di stato è descritto come mutabile, ogni nuova operazione sostituisce lo stato precedente con un nuovo stato. I vecchi dati vengono quindi considerati obsoleti;
-- Accumulante**: quando un elemento di stato è definito come accumulante, ogni nuova operazione aggiunge nuove informazioni allo stato precedente, senza sovrascriverle. Il risultato è una sorta di storia accumulata.
+- **Mutevole**: quando un elemento di stato è descritto come mutabile, ogni nuova operazione sostituisce lo stato precedente con un nuovo stato. I vecchi dati vengono quindi considerati obsoleti;
+- **Accumulante**: quando un elemento di stato è definito come accumulante, ogni nuova operazione aggiunge nuove informazioni allo stato precedente, senza sovrascriverle. Il risultato è una sorta di storia accumulata.
 
 Se nel contratto un elemento di stato non è definito come mutabile o cumulativo, questo elemento rimarrà vuoto per le operazioni successive (in altre parole, non ci saranno nuove versioni per questo campo). È lo Schema del contratto (cioè la logica aziendale codificata) a determinare se uno stato (Globale o di proprietà) è mutabile, cumulativo o fisso. Una volta definita la Genesi, queste proprietà possono essere modificate solo se il contratto stesso lo consente, ad esempio tramite una specifica Estensione di Stato.
 
@@ -1425,14 +1425,14 @@ Uno dei grandi punti di forza di RGB è la possibilità di rivelare (*rivelare*)
 La *Definizione di Sigillo*, nella sua forma rivelata, ha quattro campi di base: `txptr`, `vout`, `blinding` e `method` :
 
 
-- txptr**: è un riferimento a un UTXO su Bitcoin :
+- **txptr**: è un riferimento a un UTXO su Bitcoin :
     - Nel caso di un **sigillo Genesis**, punta direttamente a un UTXO esistente (quello associato al Genesis);
     - Nel caso di un **Graph seal**, si può avere :
         - Un semplice `txid`, se punta a un UTXO specifico,
         - Oppure un `WitnessTx`, che designa un autoreferente: il sigillo punta alla transazione stessa. Questo è particolarmente utile quando non è disponibile un UTXO esterno, ad esempio nelle transazioni di apertura del canale Lightning, o se il destinatario non ha un UTXO.
-- vout** : il numero di uscita della transazione indicata da `txptr`. Presente solo per un sigillo grafico standard (non per `WitnessTx`);
-- blinding**: un numero casuale di 8 byte, per rafforzare la riservatezza e prevenire tentativi di forza bruta sull'identità dell'UTXO;
-- metodo** : indica il metodo di ancoraggio utilizzato (`Tapret` o `Opret`).
+- **vout** : il numero di uscita della transazione indicata da `txptr`. Presente solo per un sigillo grafico standard (non per `WitnessTx`);
+- **blinding**: un numero casuale di 8 byte, per rafforzare la riservatezza e prevenire tentativi di forza bruta sull'identità dell'UTXO;
+- **metodo** : indica il metodo di ancoraggio utilizzato (`Tapret` o `Opret`).
 
 La forma *concelta* della Seal Definition è un hash SHA256 (taggato) della concatenazione di questi 4 campi, con un tag specifico per RGB.
 
@@ -1443,15 +1443,15 @@ La forma *concelta* della Seal Definition è un hash SHA256 (taggato) della conc
 Il secondo componente di *Assegnazione* è lo Stato di proprietà. A differenza dello Stato globale, può esistere in forma pubblica o privata:
 
 
-- Stato di proprietà pubblica**: tutti conoscono i dati associati al sigillo. Ad esempio, un'immagine pubblica;
-- Stato privato**: i dati sono nascosti, noti solo al proprietario (e potenzialmente al validatore, se necessario). Ad esempio, il numero di token posseduti.
+- Stato di **proprietà pubblica**: tutti conoscono i dati associati al sigillo. Ad esempio, un'immagine pubblica;
+- Stato **privato**: i dati sono nascosti, noti solo al proprietario (e potenzialmente al validatore, se necessario). Ad esempio, il numero di token posseduti.
 
 RGB definisce quattro possibili tipi di stato (*StateTypes*) per uno Stato di proprietà:
 
 
-- Dichiarativo**: non contiene dati numerici, ma solo un diritto dichiarativo (ad esempio, il diritto di voto). Le forme nascoste e rivelate sono identiche;
-- Fungibile**: rappresenta una quantità fungibile (come i gettoni). In forma rivelata, abbiamo `importo' e `marginatura'. In forma nascosta, abbiamo un singolo *impegno di Pedersen* che nasconde l'importo e l'accecamento;
-- Strutturato**: memorizza dati strutturati (fino a 64 kB). In forma rivelata, è il blob di dati. In forma nascosta, è un hash etichettato di questo blob:
+- **Dichiarativo**: non contiene dati numerici, ma solo un diritto dichiarativo (ad esempio, il diritto di voto). Le forme nascoste e rivelate sono identiche;
+- **Fungibile**: rappresenta una quantità fungibile (come i gettoni). In forma rivelata, abbiamo `importo' e `marginatura'. In forma nascosta, abbiamo un singolo *impegno di Pedersen* che nasconde l'importo e l'accecamento;
+- **Strutturato**: memorizza dati strutturati (fino a 64 kB). In forma rivelata, è il blob di dati. In forma nascosta, è un hash etichettato di questo blob:
 
 ```txt
 SHA-256(SHA-256(tag_data) || SHA-256(tag_data) || blob)
@@ -1464,7 +1464,7 @@ tag_data = urn:lnp-bp:rgb:state-data#2024-02-12
 ```
 
 
-- Allegati**: collega un file (audio, immagine, binario, ecc.) allo Stato posseduto, memorizzando l'hash del file `file_hash`, il tipo MIME `media type` e un sale crittografico `salt`. Il file stesso è ospitato altrove. In forma nascosta, è un hash etichettato con i tre dati precedenti:
+- **Allegati**: collega un file (audio, immagine, binario, ecc.) allo Stato posseduto, memorizzando l'hash del file `file_hash`, il tipo MIME `media type` e un sale crittografico `salt`. Il file stesso è ospitato altrove. In forma nascosta, è un hash etichettato con i tre dati precedenti:
 
 ```txt
 SHA-256(SHA-256(tag_attachment) || SHA-256(tag_attachment) || file_hash || media_type || salt)
@@ -1535,7 +1535,7 @@ Il campo **Metadata** può avere una dimensione massima di 64 KiB ed è utilizza
 
 ### Valenze
 
-Le valenze** sono un meccanismo originale del protocollo RGB. Si possono trovare in Genesi, Transizioni di Stato o Estensioni di Stato. Rappresentano diritti numerici che possono essere attivati da un'Estensione di Stato (tramite *Redenzioni*), quindi finalizzati da una successiva Transizione. Ogni Valenza è identificata da un `ValencyType` (16 bit). La sua semantica (diritto di riemissione, scambio di token, diritto di masterizzazione, ecc.) è definita nello Schema.
+Le **valenze** sono un meccanismo originale del protocollo RGB. Si possono trovare in Genesi, Transizioni di Stato o Estensioni di Stato. Rappresentano diritti numerici che possono essere attivati da un'Estensione di Stato (tramite *Redenzioni*), quindi finalizzati da una successiva Transizione. Ogni Valenza è identificata da un `ValencyType` (16 bit). La sua semantica (diritto di riemissione, scambio di token, diritto di masterizzazione, ecc.) è definita nello Schema.
 
 In concreto, potremmo immaginare una Genesi che definisca una valenza "diritto di riemissione". Un'Estensione di Stato la consumerà (*Redimissione*) se sono soddisfatte determinate condizioni, per introdurre una nuova quantità di gettoni. Poi, una Transizione di Stato emanata dal titolare del sigillo così creato può trasferire questi nuovi gettoni.
 
@@ -1610,12 +1610,12 @@ Questo limite garantisce :
 Una delle principali innovazioni di RGB è la rigida separazione tra due concetti:
 
 
-- Convalida**: verifica che una transizione di stato rispetti le regole del contratto (logica aziendale, storia, ecc.);
+- **Validazione**: verifica che una transizione di stato rispetti le regole del contratto (logica aziendale, storia, ecc.);
 - La **proprietà** (proprietà, o controllo): il fatto di possedere il Bitcoin UTXO che consente di spendere (o chiudere) il sigillo monouso e quindi di effettuare la transizione di stato.
 
-La convalida** avviene a livello dello stack software RGB (librerie, protocollo *impegni*, ecc.). Il suo ruolo è quello di garantire che le regole interne del contratto (importi, autorizzazioni, ecc.) siano rispettate. Anche gli osservatori o altri partecipanti possono convalidare la cronologia dei dati.
+La **validazione** avviene a livello dello stack software RGB (librerie, protocollo *impegni*, ecc.). Il suo ruolo è quello di garantire che le regole interne del contratto (importi, autorizzazioni, ecc.) siano rispettate. Anche gli osservatori o altri partecipanti possono convalidare la cronologia dei dati.
 
-La proprietà**, invece, si basa interamente sulla sicurezza di Bitcoin. Possedere la chiave privata di un UTXO significa controllare la capacità di avviare una nuova transizione (chiusura del sigillo monouso). Quindi, anche se qualcuno può vedere o convalidare i dati, non può cambiare lo stato se non possiede l'UTXO in questione.
+La **proprietà**, invece, si basa interamente sulla sicurezza di Bitcoin. Possedere la chiave privata di un UTXO significa controllare la capacità di avviare una nuova transizione (chiusura del sigillo monouso). Quindi, anche se qualcuno può vedere o convalidare i dati, non può cambiare lo stato se non possiede l'UTXO in questione.
 
 ![RGB-Bitcoin](assets/fr/069.webp)
 
@@ -1628,9 +1628,8 @@ Inoltre, questo disaccoppiamento consente a RGB di integrarsi naturalmente con l
 Oltre al versioning semantico del codice, RGB include un sistema di evoluzione o aggiornamento delle regole di consenso di un contratto nel tempo. Esistono due forme principali di evoluzione:
 
 
-- Avanti veloce**
-- Push-back** (in francese)
-
+- **Fast-forward**
+- **Push-back** 
 Un avanzamento rapido si verifica quando una regola precedentemente non valida diventa valida. Ad esempio, se il contratto si evolve per consentire un nuovo tipo di `AssignmentType` o un nuovo campo :
 
 
@@ -1701,13 +1700,13 @@ $$
 Questo meccanismo comprende due operazioni principali:
 
 
-- Commit**: una funzione crittografica viene applicata a un messaggio `m` e a un numero casuale `r` per produrre `C` ;
-- Verify**: si utilizza `C`, il messaggio `m` e il valore `r` per verificare che questo impegno sia corretto. La funzione restituisce `Vero` o `Falso`.
+- **Commit**: una funzione crittografica viene applicata a un messaggio `m` e a un numero casuale `r` per produrre `C` ;
+- **Verify**: si utilizza `C`, il messaggio `m` e il valore `r` per verificare che questo impegno sia corretto. La funzione restituisce `Vero` o `Falso`.
 
 Un impegno deve rispettare due proprietà:
 
 
-- Binding**: deve essere impossibile trovare due messaggi diversi che producano la stessa `C` :
+- **Binding**: deve essere impossibile trovare due messaggi diversi che producano la stessa `C` :
 
 $$
 m' : \, | \, : m' \neq m \quad \text{and} \quad r' : \, | \, : r' \neq r \quad
@@ -1720,7 +1719,7 @@ $$
 $$
 
 
-- Nascondere**: la conoscenza di `C` non deve rivelare il contenuto di `m`.
+- **Nascondere**: la conoscenza di `C` non deve rivelare il contenuto di `m`.
 
 Nel protocollo RGB, un impegno è incluso in una transazione Bitcoin per dimostrare l'esistenza di una certa informazione in un determinato momento, senza rivelare l'informazione stessa.
 
@@ -1729,8 +1728,8 @@ Nel protocollo RGB, un impegno è incluso in una transazione Bitcoin per dimostr
 Una **Consegna** raggruppa i dati scambiati tra le parti, soggetti a convalida lato cliente in RGB. Esistono due categorie principali di spedizioni:
 
 
-- Contract Consignment**: fornito dall'*emittente* (contract issuer), include informazioni di inizializzazione quali Schema, Genesi, Interfaccia e Implementazione dell'interfaccia.
-- Trasferimento di partita**: fornito dalla parte pagante (*pagatore*). Contiene l'intera cronologia delle transizioni di stato che portano alla consegna finale (cioè lo stato finale ricevuto dal pagatore).
+- **Contract Consignment**: fornito dall'*emittente* (contract issuer), include informazioni di inizializzazione quali Schema, Genesi, Interfaccia e Implementazione dell'interfaccia.
+- **Trasferimento di partita**: fornito dalla parte pagante (*pagatore*). Contiene l'intera cronologia delle transizioni di stato che portano alla consegna finale (cioè lo stato finale ricevuto dal pagatore).
 
 Questi invii non vengono registrati pubblicamente sulla blockchain, ma vengono scambiati direttamente tra le parti interessate attraverso il canale di comunicazione di loro scelta.
 
@@ -1743,9 +1742,9 @@ Un Contratto è un insieme di diritti eseguiti digitalmente tra diversi attori t
 Una Contract Operation è un aggiornamento dello stato del contratto eseguito secondo le regole di Schema. In RGB esistono le seguenti operazioni:
 
 
-- Transizione di stato** ;
-- Genesi** ;
-- Estensione statale**.
+- **Transizione di stato** ;
+- **Genesi** ;
+- **Estensione statale**.
 
 Ogni operazione modifica lo stato aggiungendo o sostituendo alcuni dati (Stato globale, Stato di proprietà...).
 
@@ -1763,9 +1762,9 @@ Un partecipante al contratto è un attore che prende parte alle operazioni relat
 I diritti contrattuali si riferiscono ai vari diritti che possono essere esercitati dai soggetti coinvolti in un contratto RGB. Essi si dividono in diverse categorie:
 
 
-- Diritti di proprietà**, associati alla proprietà di un particolare UTXO (tramite una _Seal Definition_);
-- Diritti esecutivi**, cioè la capacità di costruire una o più transizioni (transizioni di stato) in conformità con lo Schema ;
-- Diritti pubblici**, quando lo schema autorizza determinati usi pubblici, ad esempio la creazione di un'estensione dello Stato tramite il riscatto di una valenza.
+- **Diritti di proprietà**, associati alla proprietà di un particolare UTXO (tramite una _Seal Definition_);
+- **Diritti esecutivi**, cioè la capacità di costruire una o più transizioni (transizioni di stato) in conformità con lo Schema ;
+- **Diritti pubblici**, quando lo schema autorizza determinati usi pubblici, ad esempio la creazione di un'estensione dello Stato tramite il riscatto di una valenza.
 
 #### Stato del contratto
 
@@ -1773,15 +1772,15 @@ Lo Stato del contratto corrisponde allo stato attuale di un contratto in un dete
 
 
 - Lo **Stato globale**, che include le proprietà pubbliche del contratto (impostate in Genesis o aggiunte tramite aggiornamenti autorizzati);
-- Stati di proprietà**, che appartengono a proprietari specifici, identificati dai loro UTXO.
+- **Stati di proprietà**, che appartengono a proprietari specifici, identificati dai loro UTXO.
 
 #### Impegno deterministico di Bitcoin - DBC
 
 Il Deterministic Bitcoin Commitment (DBC) è l'insieme di regole utilizzate per registrare in modo certo e univoco un _impegno_ in una transazione Bitcoin. Nel protocollo RGB, esistono due forme principali di DBC:
 
 
-- Opret**
-- Tapret**
+- **Opret**
+- **Tapret**
 
 Questi meccanismi definiscono con precisione il modo in cui l'impegno viene codificato nell'output o nella struttura di una transazione Bitcoin, per garantire che tale impegno sia deterministicamente tracciabile e verificabile.
 
@@ -1948,10 +1947,10 @@ Questa modularità è una caratteristica interessante di RGB, in quanto consente
 In sintesi, ogni contratto è composto da :
 
 
-- Genesis**, che rappresenta lo stato iniziale del contratto (e può essere paragonato a una transazione speciale che definisce la prima proprietà di un bene, di un diritto o di qualsiasi altro dato parametrizzabile);
-- Schema**, che descrive la logica di business del contratto (tipi di dati, regole di validazione, ecc.);
-- Interfaccia**, che fornisce un livello semantico sia per i portafogli che per gli utenti umani, chiarendo la lettura e l'esecuzione delle transazioni;
-- Interfaccia di implementazione**, che colma il divario tra la logica aziendale e la presentazione, per garantire che la definizione del contratto sia coerente con l'esperienza dell'utente.
+- **Genesis**, che rappresenta lo stato iniziale del contratto (e può essere paragonato a una transazione speciale che definisce la prima proprietà di un bene, di un diritto o di qualsiasi altro dato parametrizzabile);
+- **Schema**, che descrive la logica di business del contratto (tipi di dati, regole di validazione, ecc.);
+- **Interfaccia**, che fornisce un livello semantico sia per i portafogli che per gli utenti umani, chiarendo la lettura e l'esecuzione delle transazioni;
+- **Interfaccia di implementazione**, che colma il divario tra la logica aziendale e la presentazione, per garantire che la definizione del contratto sia coerente con l'esperienza dell'utente.
 
 ![RGB-Bitcoin](assets/fr/070.webp)
 
@@ -2057,10 +2056,10 @@ Prima di immergersi nel codice, vale la pena ricordare la struttura generale di 
 
 - Un possibile `SchemaId` che indica l'uso di un altro schema di base come modello;
 - Gli **Stati globali** e gli **Stati posseduti** (con i loro tipi rigorosi) ;
-- Valenze** (se presenti);
+- **Valenze** (se presenti);
 - Le **Operazioni** (Genesi, Transizioni di stato, Estensioni di stato) che possono fare riferimento a questi stati e valenze;
 - Il **Sistema di tipi rigorosi** utilizzato per descrivere e convalidare i dati;
-- Script di convalida** (eseguiti tramite AluVM).
+- **Script di convalida** (eseguiti tramite AluVM).
 
 ![RGB-Bitcoin](assets/fr/072.webp)
 
@@ -2131,19 +2130,19 @@ EntryPoint::ValidateTransition(TS_TRANSFER) => LibSite::with(FN_TRANSFER_OFFSET,
 ```
 
 
-- (1) - Intestazione della funzione e sotto-schema**
+- (1) - **Intestazione della funzione e sotto-schema**
 
 La funzione `nia_schema()` restituisce un `SubSchema`, indicando che questo Schema può parzialmente ereditare da uno schema più generico. Nell'ecosistema RGB, questa flessibilità consente di riutilizzare alcuni elementi standard di uno schema principale, per poi definire regole specifiche per il contratto in questione. In questo caso, si sceglie di non abilitare l'ereditarietà, poiché `subset_of` sarà `None`.
 
 
-- (2) - Proprietà generali: ffv, subset_of, type_system**
+- (2) - **Proprietà generali: ffv, subset_of, type_system**
 
 La proprietà `ffv` corrisponde alla versione *veloce* del contratto. Un valore di `zero!()` indica che siamo alla versione 0 o alla versione iniziale di questo schema. Se in seguito si desidera aggiungere nuove funzionalità (nuovi tipi di operazioni, ecc.), si può incrementare questa versione per indicare una modifica del consenso.
 
 La proprietà `subset_of: None` conferma l'assenza di ereditarietà. Il campo `type_system` si riferisce al sistema di tipi rigorosi già definito nella libreria `types`. Questa riga indica che tutti i dati utilizzati dal contratto utilizzano l'implementazione della serializzazione rigorosa fornita dalla libreria in questione.
 
 
-- (3) - Stati globali
+- (3) - **Stati globali**
 
 Nel blocco `global_types`, si dichiarano quattro elementi. Utilizziamo la chiave, come `GS_NOMINAL` o `GS_ISSUED_SUPPLY`, per farvi riferimento in seguito:
 
@@ -2156,17 +2155,17 @@ Nel blocco `global_types`, si dichiarano quattro elementi. Utilizziamo la chiave
 La parola chiave `once(...)` significa che ognuno di questi campi può comparire una sola volta.
 
 
-- (4) - Tipi di proprietà
+- (4) - **Tipi di proprietà**
 
 In `owned_types`, dichiariamo `OS_ASSET`, che descrive uno stato fungibile. Utilizziamo `StateSchema::Fungible(FungibleType::Unsigned64Bit)`, indicando che la quantità di asset (token) è memorizzata come un intero a 64 bit senza segno. Pertanto, ogni transazione invierà una certa quantità di unità di questo token, che sarà convalidata in base a questa struttura numerica strettamente tipizzata.
 
 
-- (5) - Valenze**
+- (5) - **Valenze**
 
 Indichiamo `tipi_di_valenza: nessuno!()`, il che significa che non ci sono valenze in questo schema, in altre parole non ci sono diritti speciali o extra (come la riedizione, la masterizzazione condizionale, ecc.). Se uno schema ne includesse, sarebbero dichiarate in questa sezione.
 
 
-- (6) - Genesi: prime operazioni
+- (6) - **Genesi: prime operazioni**
 
 Qui entriamo nella parte che dichiara le Operazioni contrattuali. La Genesi è descritta da :
 
@@ -2179,12 +2178,12 @@ Qui entriamo nella parte che dichiara le Operazioni contrattuali. La Genesi è d
 In questo modo limitiamo la definizione dell'emissione iniziale del token: dobbiamo dichiarare l'offerta emessa (`GS_ISSUED_SUPPLY`), più almeno un possessore (un Owned State di tipo `OS_ASSET`).
 
 
-- (7) - Estensioni
+- (7) - **Estensioni**
 
 Il campo `estensioni: nessuna!()` indica che in questo contratto non è prevista alcuna estensione di stato. Ciò significa che non esiste alcuna operazione per riscattare un diritto digitale (Valency) o per eseguire un'estensione di stato prima di una transizione. Tutto avviene tramite Genesi o Transizioni di Stato.
 
 
-- (8) - Transizioni: TS_TRANSFER
+- (8) - **Transizioni: TS_TRANSFER**
 
 In `transizioni', definiamo il tipo di operazione `TS_TRANSFER'. Spieghiamo che :
 
@@ -2198,7 +2197,7 @@ In `transizioni', definiamo il tipo di operazione `TS_TRANSFER'. Spieghiamo che 
 Questo modella il comportamento di un trasferimento di base, che consuma gettoni su un UTXO, quindi crea nuovi Stati Propri a favore dei destinatari, e quindi preserva l'uguaglianza dell'importo totale tra entrate e uscite.
 
 
-- (9) - Script AluVM e punti di ingresso** (in francese)
+- (9) - **Script AluVM e punti di ingresso** (in francese)
 
 Infine, si dichiara uno script AluVM (`Script::AluVM(AluScript { ... })`). Questo script contiene :
 
@@ -2236,17 +2235,17 @@ Grazie all'interfaccia, è possibile, ad esempio, scrivere codice in un portafog
 Questo metodo presenta molti vantaggi:
 
 
-- Standardizzazione:**
+- **Standardizzazione:**
 
 Lo stesso tipo di contratto può essere supportato da un'interfaccia standard, condivisa da diverse implementazioni di portafogli. Questo facilita la compatibilità e il riutilizzo del codice.
 
 
-- Chiara separazione tra Schema e Interfaccia:**
+- **Chiara separazione tra Schema e Interfaccia:**
 
 Nella progettazione RGB, Schema (logica di business) e Interfaccia (presentazione e manipolazione) sono due entità indipendenti. Gli sviluppatori che scrivono la logica del contratto possono concentrarsi sullo Schema, senza preoccuparsi dell'ergonomia o della rappresentazione dei dati, mentre un altro team (o lo stesso team, ma con una tempistica diversa) può sviluppare l'Interfaccia.
 
 
-- Evoluzione flessibile:**
+- **Evoluzione flessibile:**
 
 L'interfaccia può essere modificata o aggiunta dopo l'emissione dell'asset, senza dover modificare il contratto stesso. Questa è una differenza sostanziale rispetto ad alcuni sistemi di smart contract on-chain, in cui l'interfaccia (spesso mescolata al codice di esecuzione) è congelata nella blockchain.
 
@@ -2300,18 +2299,18 @@ Ad esempio, l'interfaccia RGB20 può essere collegata allo schema **Non-Inflatab
 - Supporto integrato per l'inclusione diretta di un file (fino a 16 MB) nel contratto (per il recupero lato client);
 - La possibilità per il proprietario di inserire una "*incisione*" nella cronologia per dimostrare la passata proprietà di un NFT.
 
-**RGB25** è uno standard ibrido che combina aspetti fungibili e non fungibili. È stato progettato per asset parzialmente fungibili, come la tokenizzazione di immobili, in cui si desidera suddividere una proprietà mantenendo un collegamento a un singolo asset principale (in altre parole, si hanno pezzi fungibili di una casa, collegati a una casa non fungibile). Tecnicamente, questa interfaccia può essere collegata allo schema **Collectible Fungible Asset* (CFA)**, che tiene conto della nozione di suddivisione, pur tracciando il bene originale.
+**RGB25** è uno standard ibrido che combina aspetti fungibili e non fungibili. È stato progettato per asset parzialmente fungibili, come la tokenizzazione di immobili, in cui si desidera suddividere una proprietà mantenendo un collegamento a un singolo asset principale (in altre parole, si hanno pezzi fungibili di una casa, collegati a una casa non fungibile). Tecnicamente, questa interfaccia può essere collegata allo schema ***Collectible Fungible Asset* (CFA)**, che tiene conto della nozione di suddivisione, pur tracciando il bene originale.
 
 #### Interfacce in fase di sviluppo
 
 Altre interfacce sono previste per usi più specialistici, ma non sono ancora disponibili:
 
 
-- RGB22**, dedicato alle identità digitali, per gestire gli identificatori e i profili on-chain nell'ecosistema RGB;
-- RGB23**, per la marcatura temporale avanzata, utilizzando alcune idee di *Opentimestamps*, ma con funzioni di tracciabilità;
-- RGB24**, che mira all'equivalente di un sistema di nomi di dominio (DNS) decentralizzato simile all'*Ethereum Name Service* ;
-- RGB26**, progettato per gestire le DAO (*Decentralized Autonomous Organization*) in un formato più complesso (governance, votazione, ecc.);
-- RGB30**, molto simile a RGB20 ma con la particolarità di tenere conto dell'emissione iniziale decentralizzata e di utilizzare le estensioni statali. Questo sarebbe utilizzato per le attività la cui riemissione è gestita da diverse entità, o soggetta a condizioni più sottili.
+- **RGB22**, dedicato alle identità digitali, per gestire gli identificatori e i profili on-chain nell'ecosistema RGB;
+- **RGB23**, per la marcatura temporale avanzata, utilizzando alcune idee di *Opentimestamps*, ma con funzioni di tracciabilità;
+- **RGB24**, che mira all'equivalente di un sistema di nomi di dominio (DNS) decentralizzato simile all'*Ethereum Name Service* ;
+- **RGB26**, progettato per gestire le DAO (*Decentralized Autonomous Organization*) in un formato più complesso (governance, votazione, ecc.);
+- **RGB30**, molto simile a RGB20 ma con la particolarità di tenere conto dell'emissione iniziale decentralizzata e di utilizzare le estensioni statali. Questo sarebbe utilizzato per le attività la cui riemissione è gestita da diverse entità, o soggetta a condizioni più sottili.
 
 Naturalmente, a seconda della data di consultazione del corso, queste interfacce potrebbero essere già operative e accessibili.
 
@@ -2763,17 +2762,17 @@ In sintesi, ecco il processo di trasferimento completo:
 ### Vantaggi dei trasferimenti RGB
 
 
-- Riservatezza** :
+- **Riservatezza** :
 
 Solo Alice e Bob hanno accesso a tutti i dati sulla transizione di stato. Essi si scambiano queste informazioni al di fuori della blockchain, attraverso le spedizioni. Gli impegni crittografici nella transazione Bitcoin non rivelano il tipo di bene o l'importo, il che garantisce una riservatezza molto maggiore rispetto ad altri sistemi di token on-chain.
 
 
-- Convalida lato cliente** :
+- **Convalida lato cliente** :
 
 Bob può verificare la coerenza del trasferimento confrontando il *consignment* con gli *anchor* della blockchain Bitcoin. Non ha bisogno di una convalida da parte di terzi. Alice non deve pubblicare l'intera cronologia sulla blockchain, il che riduce il carico del protocollo di base e migliora la riservatezza.
 
 
-- Atomicità semplificata** :
+- **Atomicità semplificata** :
 
 Scambi complessi (scambi atomici tra BTC e un asset RGB, ad esempio) possono essere effettuati all'interno di una singola transazione, evitando la necessità di script HTLC o PTLC. Se l'accordo non viene trasmesso, ognuno può riutilizzare i propri UTXO in altri modi.
 
@@ -2848,11 +2847,11 @@ rgb:2WBcas9-yjzEvGufY-9GEgnyMj7-beMNMWA8r-sPHtV1nPU-TMsGMQX/RGB20/100+utxob:egXs
 Analizziamo questo URL:
 
 
-- `rgb:`** (prefisso): indica un collegamento che invoca il protocollo RGB (analogo a `http:` o `bitcoin:` in altri contesti);
-- `2WBcas9-yjzEvGufY-9GEgnyMj7-beMNMWA8r-sPHtV1nPU-TMsGMQX`**: rappresenta il `ContractId` del token che si vuole manipolare;
-- `/RGB20/100`**: indica che viene utilizzata l'interfaccia `RGB20` e che vengono richieste 100 unità dell'asset. La sintassi è: `/Interface/amount` ;
-- `+utxob:`**: specifica che vengono aggiunte informazioni sull'UTXO ricevente (o, più precisamente, sulla definizione del sigillo monouso);
-- `egXsFnw-5Eud7WKYn-7DVQvcPbc-rR69YmgmG-veacwmUFo-uMFKFb`**: questo è l'UTXO *blindato* (o definizione di sigillo). In altre parole, Bob ha mascherato il suo UTXO esatto, quindi il mittente (Alice) non sa quale sia l'indirizzo esatto. Sa solo che esiste un sigillo valido che si riferisce a un UTXO controllato da Bob.
+- **`rgb:`** (prefisso): indica un collegamento che invoca il protocollo RGB (analogo a `http:` o `bitcoin:` in altri contesti);
+- **`2WBcas9-yjzEvGufY-9GEgnyMj7-beMNMWA8r-sPHtV1nPU-TMsGMQX`**: rappresenta il `ContractId` del token che si vuole manipolare;
+- **`/RGB20/100`**: indica che viene utilizzata l'interfaccia `RGB20` e che vengono richieste 100 unità dell'asset. La sintassi è: `/Interface/amount` ;
+- **`+utxob:`**: specifica che vengono aggiunte informazioni sull'UTXO ricevente (o, più precisamente, sulla definizione del sigillo monouso);
+- **`egXsFnw-5Eud7WKYn-7DVQvcPbc-rR69YmgmG-veacwmUFo-uMFKFb`**: questo è l'UTXO *blindato* (o definizione di sigillo). In altre parole, Bob ha mascherato il suo UTXO esatto, quindi il mittente (Alice) non sa quale sia l'indirizzo esatto. Sa solo che esiste un sigillo valido che si riferisce a un UTXO controllato da Bob.
 
 Il fatto che tutto rientri in un unico URL semplifica la vita dell'utente: un semplice clic o una scansione nel portafoglio e l'operazione è pronta per essere eseguita.
 
@@ -2879,11 +2878,11 @@ rgb:7BKsac8-beMNMWA8r-3GEprtFh7-bjzEvGufY-aNLuU4nSN-MRsLOIK/RGB21/DbwzvSu-4BZU81
 Qui vediamo :
 
 
-- `rgb:`**: Prefisso URL ;
-- `7BKsac8-beMNMWA8r-3GEprtFh7-bjzEvGufY-aNLuU4nSN-MRsLOIK`**: ID contratto (NFT) ;
-- rGB21**: interfaccia per beni non fungibili (NFT) ;
-- `DbwzvSu-4BZU81jEp-...`**: un riferimento esplicito alla parte unica dell'NFT, ad esempio un hash del blob di dati (media, metadati...) ;
-- `+utxob:egXsFnw-...`**: la definizione del sigillo.
+- **`rgb:`**: Prefisso URL ;
+- **`7BKsac8-beMNMWA8r-3GEprtFh7-bjzEvGufY-aNLuU4nSN-MRsLOIK`**: ID contratto (NFT) ;
+- **rGB21**: interfaccia per beni non fungibili (NFT) ;
+- **`DbwzvSu-4BZU81jEp-...`**: un riferimento esplicito alla parte unica dell'NFT, ad esempio un hash del blob di dati (media, metadati...) ;
+- **`+utxob:egXsFnw-...`**: la definizione del sigillo.
 
 L'idea è la stessa: trasmettere un link unico che il portafoglio possa interpretare, identificando chiaramente l'asset unico da trasferire.
 
@@ -3132,8 +3131,8 @@ Per effettuare un trasferimento, è necessario manipolare un portafoglio Bitcoin
 Nella maggior parte dei casi, l'interazione tra i partecipanti a un contratto (ad esempio, Alice e Bob) avviene attraverso la generazione di una fattura. Se Alice vuole che Bob esegua qualcosa (un trasferimento di token, una riemissione, un'azione in un DAO, ecc.), Alice crea una fattura che dettaglia le sue istruzioni a Bob. Quindi abbiamo :
 
 
-- Alice** (l'emittente della fattura) ;
-- Bob** (che riceve ed esegue la fattura).
+- **Alice** (l'emittente della fattura) ;
+- **Bob** (che riceve ed esegue la fattura).
 
 A differenza di altri ecosistemi, una fattura RGB non si limita alla nozione di pagamento. Può incorporare qualsiasi richiesta legata al contratto: revocare una chiave, votare, creare un'incisione (*incisione*) su un NFT, ecc. L'operazione corrispondente può essere descritta nell'interfaccia del contratto. L'operazione corrispondente può essere descritta nell'interfaccia del contratto.
 
@@ -3273,87 +3272,87 @@ Infine, prima di passare alla sezione successiva, vorrei fornire una panoramica 
 #### Convalida lato client
 
 
-- Repository**: [client_side_validation](https://github.com/LNP-BP/client_side_validation)
-- Casse** : [client_side_validation](https://crates.io/crates/client_side_validation), [single_use_seals](https://crates.io/crates/single_use_seals)
+- **Repository**: [client_side_validation](https://github.com/LNP-BP/client_side_validation)
+- **Casse** : [client_side_validation](https://crates.io/crates/client_side_validation), [single_use_seals](https://crates.io/crates/single_use_seals)
 
 Gestione della convalida fuori catena e della logica dei sigilli monouso.
 
 #### Impegni deterministici di Bitcoin (DBC)
 
 
-- Repository**: [bp-core](https://github.com/BP-WG/bp-core)
-- Cassa**: [bp-dbc](https://crates.io/crates/bp-dbc)
+- **Repository**: [bp-core](https://github.com/BP-WG/bp-core)
+- **Cassa**: [bp-dbc](https://crates.io/crates/bp-dbc)
 
 Gestione dell'ancoraggio deterministico nelle transazioni Bitcoin (Tapret, OP_RETURN, ecc.).
 
 #### Impegno multiprotocollo (MPC)
 
 
-- Repository**: [client_side_validation](https://github.com/LNP-BP/client_side_validation)
-- Cassa** : [commit_verify](https://crates.io/crates/commit_verify)
+- **Repository**: [client_side_validation](https://github.com/LNP-BP/client_side_validation)
+- **Cassa** : [commit_verify](https://crates.io/crates/commit_verify)
 
 Combinazioni di ingaggio multiple e integrazione con diversi protocolli.
 
 #### Tipi rigorosi e codifica rigorosa
 
 
-- Specifiche**: [sito web strict-types.org](https://www.strict-types.org/)
-- Repository**: [strict-types](https://github.com/strict-types/strict-types), [strict-encoding](https://github.com/strict-types/strict-encoding)
-- Casse** : [strict_types](https://crates.io/crates/strict_types), [strict_encoding](https://crates.io/crates/strict_encoding)
+- **Specifiche**: [sito web strict-types.org](https://www.strict-types.org/)
+- **Repository**: [strict-types](https://github.com/strict-types/strict-types), [strict-encoding](https://github.com/strict-types/strict-encoding)
+- **Casse** : [strict_types](https://crates.io/crates/strict_types), [strict_encoding](https://crates.io/crates/strict_encoding)
 
 Il sistema di tipizzazione rigoroso e la serializzazione deterministica utilizzati per la validazione lato client.
 
 #### Nucleo RGB
 
 
-- Repository**: [rgb-core](https://github.com/RGB-WG/rgb-core)
-- Cassa**: [rgb-core](https://crates.io/crates/rgb-core)
+- **Repository**: [rgb-core](https://github.com/RGB-WG/rgb-core)
+- **Cassa**: [rgb-core](https://crates.io/crates/rgb-core)
 
 Il cuore del protocollo, che racchiude la logica principale della convalida RGB.
 
 #### Libreria e portafoglio standard RGB
 
 
-- Repository**: [rgb-std](https://github.com/RGB-WG/rgb-std)
-- Cassa** : [rgb-std](https://crates.io/crates/rgb-std)
+- **Repository**: [rgb-std](https://github.com/RGB-WG/rgb-std)
+- **Cassa** : [rgb-std](https://crates.io/crates/rgb-std)
 
 Implementazioni standard, gestione di stash e portafogli.
 
 #### RGB CLI
 
 
-- Repository**: [rgb](https://github.com/RGB-WG/rgb)
-- Casse**: [rgb-cli](https://crates.io/crates/rgb-cli), [rgb-wallet](https://crates.io/crates/rgb-wallet)
+- **Repository**: [rgb](https://github.com/RGB-WG/rgb)
+- **Casse**: [rgb-cli](https://crates.io/crates/rgb-cli), [rgb-wallet](https://crates.io/crates/rgb-wallet)
 
 La CLI `rgb` e il crate wallet, per la manipolazione dei contratti a riga di comando.
 
 #### Schema RGB
 
 
-- Repository**: [rgb-schemata](https://github.com/RGB-WG/rgb-schemata/)
+- **Repository**: [rgb-schemata](https://github.com/RGB-WG/rgb-schemata/)
 
 Contiene esempi di schemi (NIA, UDA, ecc.) e delle loro implementazioni.
 
 #### ALuVM
 
 
-- Info** : [aluvm.org](https://www.aluvm.org/)
-- Repository**: [aluvm-spec](https://github.com/AluVM/aluvm-spec), [alure](https://github.com/AluVM/alure)
-- Casse**: [aluvm](https://crates.io/crates/aluvm), [aluasm](https://crates.io/crates/aluasm)
+- **Info** : [aluvm.org](https://www.aluvm.org/)
+- **Repository**: [aluvm-spec](https://github.com/AluVM/aluvm-spec), [alure](https://github.com/AluVM/alure)
+- **Casse**: [aluvm](https://crates.io/crates/aluvm), [aluasm](https://crates.io/crates/aluasm)
 
 Macchina virtuale basata sul registro utilizzata per eseguire gli script di convalida.
 
 #### Protocollo Bitcoin - BP
 
 
-- Repository** : [bp-core](https://github.com/BP-WG/bp-core), [bp-std](https://github.com/BP-WG/bp-std), [bp-wallet](https://github.com/BP-WG/bp-wallet)
+- **Repository** : [bp-core](https://github.com/BP-WG/bp-core), [bp-std](https://github.com/BP-WG/bp-std), [bp-wallet](https://github.com/BP-WG/bp-wallet)
 
 Componenti aggiuntivi per il supporto del protocollo Bitcoin (transazioni, bypass, ecc.).
 
 #### Calcolo deterministico ubiquo - UBIDECO
 
 
-- Repository**: [UBIDECO](https://github.com/UBIDECO)
+- **Repository**: [UBIDECO](https://github.com/UBIDECO)
 
 Ecosistema legato agli sviluppi deterministici open-source.
 
@@ -3416,8 +3415,8 @@ L'azienda che sta dietro a Bitmask non si limita al semplice sviluppo di un port
 
 
 - Un **mercato** per lo scambio di gettoni, in particolare in forma **RGB21**;
-- Compatibilità con altri portafogli (come *Iris Wallet*);
-- Tecniche di batching** dei trasferimenti, ovvero la possibilità di includere diversi trasferimenti RGB successivi in un'unica transazione.
+- **Compatibilità** con altri portafogli (come *Iris Wallet*);
+- Tecniche di **batching** dei trasferimenti, ovvero la possibilità di includere diversi trasferimenti RGB successivi in un'unica transazione.
 
 Allo stesso tempo, stiamo lavorando a **WebBTC** o **WebLN** (standard che consentono ai siti web di chiedere al portafoglio di firmare le transazioni Bitcoin o Lightning), nonché alla possibilità di "teleburnare" le voci Ordinals (se vogliamo rimpatriare gli Ordinals in un formato RGB più discreto e flessibile).
 
@@ -3477,7 +3476,7 @@ Come ogni portafoglio, Iris ha bisogno di conoscere le conferme delle transazion
 
 A differenza di Bitcoin, RGB richiede lo scambio di metadati fuori catena (*conferimenti*) tra mittente e destinatario. Per semplificare questo processo, Iris offre una soluzione in cui la comunicazione avviene tramite un server proxy. Il portafoglio ricevente genera una *fattura* che indica dove il mittente deve inviare i dati *sul lato cliente*. Per impostazione predefinita, l'URL punta a un proxy ospitato dal team Bitfinex, ma è possibile cambiare questo proxy (o ospitarne uno proprio). L'idea è quella di tornare a un'esperienza utente familiare in cui il destinatario visualizza un codice QR e il mittente lo scansiona per effettuare la transazione, senza complesse manipolazioni aggiuntive.
 
-**Backup continuo
+**Backup continuo**
 
 In un contesto strettamente Bitcoin, il backup del seme è generalmente sufficiente (anche se al giorno d'oggi si consiglia di eseguire il backup del seme e dei descrittori). Con RGB, questo non è sufficiente: è necessario conservare anche la storia locale (i *conferimenti*) che dimostra che si possiede davvero un asset RGB. Ogni volta che si riceve una ricevuta, il dispositivo memorizza nuovi dati, essenziali per le spese successive. Iris gestisce automaticamente un backup criptato nel Google Drive dell'utente. Questo non richiede una particolare fiducia in Google, poiché il backup è criptato, e per il futuro sono previste opzioni più robuste (come un server personale) per evitare qualsiasi rischio di censura o cancellazione da parte di un operatore terzo.
 
@@ -3607,17 +3606,17 @@ Al termine di questo comando, un eseguibile `rgb-lightning-node' sarà disponibi
 Per funzionare, il demone `rgb-lightning-node` richiede la presenza e la configurazione di :
 
 
-- Un nodo `bitcoind`**
+- **Un nodo `bitcoind`**
 
 Ogni istanza RLN dovrà comunicare con `bitcoind` per trasmettere e monitorare le proprie transazioni sulla catena. Al demone dovranno essere forniti l'autenticazione (login/password) e l'URL (host/porta).
 
 
-- Un indicizzatore** (Electrum o Esplora)
+- **Un indicizzatore** (Electrum o Esplora)
 
 Il demone deve essere in grado di elencare ed esplorare le transazioni sulla catena, in particolare di trovare l'UTXO su cui è stata ancorata una risorsa. È necessario specificare l'URL del server Electrum o di Esplora.
 
 
-- Un proxy RGB**
+- **Un proxy RGB**
 
 Come visto nei capitoli precedenti, il **proxy server** è un componente (opzionale, ma altamente consigliato) per semplificare lo scambio di *incarichi* tra i peer di Lightning. Anche in questo caso, è necessario specificare un URL.
 
