@@ -586,7 +586,7 @@ In pratica, **sig tweak** non è molto compatibile con l'hardware (portafogli ha
 
 ***Modifica chiave (pay-to-contract) :***
 
-Il **tweak della chiave** riprende il concetto storico di _pay-to-contract_. Prendiamo la chiave pubblica `X' e la modifichiamo aggiungendo il valore `H(messaggio)`. In particolare, se `X = x * G` e `h = H(messaggio)`, la nuova chiave sarà `X' = X + h * G`. Questa chiave modificata nasconde il commitment nei confronti del `messaggio'. Il detentore della chiave privata originale può, aggiungendo `h' alla sua chiave privata `x', dimostrare di avere la chiave per spendere l'output. In teoria, questo è elegante, perché :
+Il **tweak della chiave** riprende il concetto storico di _pay-to-contract_. Prendiamo la chiave pubblica `X` e la modifichiamo aggiungendo il valore `H(messaggio)`. In particolare, se `X = x * G` e `h = H(messaggio)`, la nuova chiave sarà `X' = X + h * G`. Questa chiave modificata nasconde il commitment nei confronti del `messaggio`. Il detentore della chiave privata originale può, aggiungendo `h` alla sua chiave privata `x`, dimostrare di avere la chiave per spendere l'output. In teoria, questo è elegante, perché :
 
 
 - L'_impegno_ viene inserito senza aggiungere altri campi;
@@ -614,7 +614,7 @@ Inoltre, il testimone è stato progettato per essere potatile in determinati con
 
 ***Open-return (opret):***
 
-Molto semplice nel suo funzionamento, un `OP_RETURN' permette di memorizzare un hash o un messaggio in un campo speciale della transazione. Ma è immediatamente rilevabile: tutti vedono che c'è un _commitment_ nella transazione, e può essere censurato o scartato, oltre ad aggiungere output extra. Poiché questo aumenta la trasparenza e le dimensioni, è considerato meno soddisfacente dal punto di vista di una soluzione di validazione lato client.
+Molto semplice nel suo funzionamento, un `OP_RETURN` permette di memorizzare un hash o un messaggio in un campo speciale della transazione. Ma è immediatamente rilevabile: tutti vedono che c'è un _commitment_ nella transazione, e può essere censurato o scartato, oltre ad aggiungere output extra. Poiché questo aumenta la trasparenza e le dimensioni, è considerato meno soddisfacente dal punto di vista di una soluzione di validazione lato client.
 
 ```txt
 34-byte_Opret_Commitment =
@@ -663,14 +663,14 @@ In questo primo caso, si parte da una chiave di uscita taproot (*Taproot Output 
 
 - `P`: la chiave pubblica interna del _Key Path Spend_.
 - `G`: il punto di generazione della curva ellittica [secp256k1](https://en.bitcoin.it/wiki/Secp256k1).
-- t = tH_TWEAK(P)` è il fattore di tweak, calcolato tramite un _tagged hash_ (ad esempio `SHA-256(SHA-256(TapTweak) || P)`), in accordo con [BIP86](https://github.com/bitcoin/bips/blob/master/bip-0086.mediawiki#address-derivation). Questo dimostra che non esiste uno script nascosto.
+- `t = tH_TWEAK(P)` è il fattore di tweak, calcolato tramite un _tagged hash_ (ad esempio `SHA-256(SHA-256(TapTweak) || P)`), in accordo con [BIP86](https://github.com/bitcoin/bips/blob/master/bip-0086.mediawiki#address-derivation). Questo dimostra che non esiste uno script nascosto.
 
 Per includere un impegno **Tapret**, aggiungere un **Script Path Spend** con uno **scritto unico**, come segue:
 
 ![RGB-Bitcoin](assets/fr/048.webp)
 
 
-- t = tH_TWEAK(P || Script_root)` diventa quindi il nuovo fattore di modifica, compresa la **Script_root**.
+- `t = tH_TWEAK(P || Script_root)` diventa quindi il nuovo fattore di modifica, compresa la **Script_root**.
 - `Script_root = tH_BRANCH(64-byte_Tapret_Commitment)` rappresenta la radice di questo **script**, che è semplicemente un hash di tipo `SHA-256(SHA-256(TapBranch) || 64-byte_Tapret_Commitment)`.
 
 La prova dell'inclusione e dell'unicità nell'albero della radice si riduce alla singola chiave pubblica interna `P`.
@@ -683,7 +683,7 @@ Il secondo scenario riguarda un output `Q` **taproot** più complesso, che conti
 
 
 - `tH_LEAF(x)` designa la funzione hash normalizzata di uno script foglia.
-- a, B, C` rappresentano gli script già inclusi nella struttura del fittone.
+- `a, B, C` rappresentano gli script già inclusi nella struttura del fittone.
 
 Per aggiungere il commitment di Tapret, dobbiamo inserire uno *scritto non spendibile* al primo livello dell'albero, spostando gli script esistenti un livello più in basso. Visivamente, l'albero diventa :
 
@@ -697,7 +697,7 @@ Secondo le regole del taproot, ogni ramo/foglia deve essere combinato secondo un
 
 
 - `tHT` > `tHABC`: il commitment di Tapret si sposta a destra dell'albero. La prova di unicità richiede solo `tHABC` e `P` ;
-- tHT` < `tHABC`**: il commitment Tapret è posto a sinistra. Per dimostrare che non esiste un altro impegno Tapret a destra, occorre rivelare `tHAB` e `tHC` per dimostrare l'assenza di un'altra scrittura di questo tipo.
+- `tHT` < `tHABC`**: il commitment Tapret è posto a sinistra. Per dimostrare che non esiste un altro impegno Tapret a destra, occorre rivelare `tHAB` e `tHC` per dimostrare l'assenza di un'altra scrittura di questo tipo.
 
 Esempio visivo per il primo caso (`tHABC < tHT`):
 
@@ -822,7 +822,7 @@ dove :
 
 - `mpc_tag` è un tag: `urn:ubideco:mpc:commitment#2024-01-31`, scelto in base alle [convenzioni di etichettatura RGB] (https://github.com/RGB-WG/rgb-core/blob/master/doc/Commitments.md);
 - `depth` (1 byte) indica la profondità dell'albero *MPC* ;
-- cofactor` (16 bit, in Little Endian) è un parametro utilizzato per promuovere l'unicità delle posizioni assegnate a ciascun contratto nell'albero;
+- `cofactor` (16 bit, in Little Endian) è un parametro utilizzato per promuovere l'unicità delle posizioni assegnate a ciascun contratto nell'albero;
 - `mpc::Root` è la radice di *MPC Tree*, calcolata secondo il processo descritto nella prossima sezione.
 
 ![RGB-Bitcoin](assets/fr/044.webp)
@@ -832,7 +832,7 @@ dove :
 Per costruire questo albero MPC, dobbiamo assicurarci che ogni contratto corrisponda a un'unica posizione della foglia. Supponiamo di avere :
 
 
-- c` contratti da includere, indicizzati da `i` in `i = {0,1,...,C-1}` ;
+- `c` contratti da includere, indicizzati da `i` in `i = {0,1,...,C-1}` ;
 - Per ogni contratto `c_i`, abbiamo un identificatore `ContractId(i) = c_i`.
 
 Si costruisce quindi un albero di larghezza `w` e profondità `d` tale che `2^d = w`, con `w > C`, in modo che ogni contratto possa essere collocato in una _foglia_ separata. La posizione `pos(c_i)` di ogni contratto nell'albero è determinata da :
@@ -841,7 +841,7 @@ Si costruisce quindi un albero di larghezza `w` e profondità `d` tale che `2^d 
 pos(c_i) = c_i mod (w - cofactor)
 ```
 
-dove `cofattore' è un numero intero che aumenta la probabilità di ottenere posizioni distinte per ogni contratto. In pratica, la costruzione segue un processo iterativo:
+dove `cofattore` è un numero intero che aumenta la probabilità di ottenere posizioni distinte per ogni contratto. In pratica, la costruzione segue un processo iterativo:
 
 
 - Si parte da una profondità minima (`d=3` per convenzione, per nascondere il numero esatto di contratti);
@@ -864,7 +864,7 @@ dove :
 - `merkle_tag = urn:ubideco:merkle:node#2024-01-31`, è sempre scelto in base alle convenzioni Merkle di RGB ;
 - `0x10` identifica una _foglia di contratto_ ;
 - `c_i` è l'identificatore del contratto a 32 byte (derivato dall'hash di Genesis);
-- bundleId(c_i)` è un hash di 32 byte che descrive l'insieme delle `Transizioni di stato` relative a `c_i` (raccolte in un *Bundle di transizione*).
+- `bundleId(c_i)` è un hash di 32 byte che descrive l'insieme delle `Transizioni di stato` relative a `c_i` (raccolte in un *Bundle di transizione*).
 
 #### Foglie disabitate
 
@@ -880,7 +880,7 @@ dove :
 - `merkle_tag = urn:ubideco:merkle:node#2024-01-31`, è sempre scelto in base alle convenzioni Merkle di RGB ;
 - `0x11` denota una _foglia di entropia_ ;
 - l'entropia è un valore casuale di 64 byte, scelto dalla persona che costruisce l'albero;
-- `j' è la posizione (in 32 bit Little Endian) di questa foglia nell'albero.
+- `j` è la posizione (in 32 bit Little Endian) di questa foglia nell'albero.
 
 #### Nodi MPC
 
@@ -894,10 +894,10 @@ dove :
 
 
 - `merkle_tag = urn:ubideco:merkle:node#2024-01-31`, è sempre scelto in base alle convenzioni Merkle di RGB ;
-- b` è il _fattore di ramificazione_ (8 bit). Molto spesso, `b=0x02` perché l'albero è binario e completo;
+- `b` è il _fattore di ramificazione_ (8 bit). Molto spesso, `b=0x02` perché l'albero è binario e completo;
 - d'è la profondità del nodo nell'albero;
 - `w` è la larghezza dell'albero (in formato binario Little Endian a 256 bit);
-- tH1` e `tH2` sono gli hash dei nodi figli (o foglie), già calcolati come mostrato sopra.
+- `tH1` e `tH2` sono gli hash dei nodi figli (o foglie), già calcolati come mostrato sopra.
 
 Procedendo in questo modo, si ottiene la radice `mpc::Root`. Possiamo quindi calcolare `mpc::Commitment` (come spiegato sopra) e inserirlo nella catena.
 
@@ -960,9 +960,9 @@ In teoria, sarebbe possibile trovare questo `Txid` tracciando la catena di trans
 Il secondo campo, `MPC Proof`, si riferisce alla prova che questo particolare contratto (ad esempio `c_i`) è incluso nel _Multi Protocol Commitment_. È una combinazione di :
 
 
-- `pos_i', la posizione di questo contratto nell'albero MPC;
-- cofattore`, il valore definito per risolvere le collisioni di posizione;
-- la `Merkle Proof', cioè l'insieme dei nodi e degli hash utilizzati per ricostruire la radice dell'MPC e verificare che l'identificatore del contratto e il suo `Transition Bundle' siano impegnati nella radice.
+- `pos_i`, la posizione di questo contratto nell'albero MPC;
+- `cofattore`, il valore definito per risolvere le collisioni di posizione;
+- la `Merkle Proof`, cioè l'insieme dei nodi e degli hash utilizzati per ricostruire la radice dell'MPC e verificare che l'identificatore del contratto e il suo `Transition Bundle` siano impegnati nella radice.
 
 Questo meccanismo è stato descritto nella sezione precedente sulla costruzione dell'albero *MPC*, dove ogni contratto ottiene una foglia unica grazie alla funzione :
 
@@ -983,7 +983,7 @@ Il terzo campo, il **ETP**, dipende dal tipo di impegno utilizzato. Se il commit
 - I nodi partner dello `Script Path Spend` (quando il Tapret *commitment* è inserito in uno script), per dimostrare l'esatta posizione di questo script nell'albero delle radici:
  - Se il `Tapret` *impegno* è sul ramo destro, riveliamo il nodo sinistro (ad esempio `tHABC`),
  - Se l'*impegno* di `Tapret` è a sinistra, è necessario rivelare 2 nodi (ad esempio `tHAB` e `tHC`) per dimostrare che nessun altro *impegno* è presente sul lato destro.
-- Il `nonce' può essere usato per "estrarre" la configurazione migliore, consentendo al *impegno* di essere collocato a destra dell'albero (ottimizzazione della prova).
+- Il `nonce` può essere usato per "estrarre" la configurazione migliore, consentendo al *impegno* di essere collocato a destra dell'albero (ottimizzazione della prova).
 
 Questa prova aggiuntiva è essenziale perché, a differenza di `Opret`, il commitment di `Tapret` è integrato nella struttura di uno script taproot, che richiede la rivelazione di parte dell'albero taproot per validare correttamente la posizione dell'*impegno*.
 
@@ -1170,7 +1170,7 @@ Le **transizioni di stato**, descritte nel capitolo precedente, sono la forma pr
 
 ![RGB-Bitcoin](assets/fr/063.webp)
 
-Questo diagramma mostra come, in un *Bundle di transizione di stato*, diversi sigilli possano essere chiusi in una singola transazione campione, aprendo contemporaneamente nuovi sigilli. In effetti, una caratteristica interessante del protocollo RGB è la sua capacità di scalare: diverse transizioni possono essere aggregate in un Transition Bundle, ogni aggregazione è associata a una foglia distinta dell'albero *MPC* (un identificatore unico del bundle). Grazie al meccanismo *Deterministic Bitcoin Commitment* (DBC), l'intero messaggio viene inserito in un'uscita `Tapret` o `Opret`, chiudendo i sigilli precedenti ed eventualmente definendone di nuovi. L'`Anchor* funge da collegamento diretto tra il commitment memorizzato nella blockchain e la struttura di validazione lato client (*client-side*).
+Questo diagramma mostra come, in un *Bundle di transizione di stato*, diversi sigilli possano essere chiusi in una singola transazione campione, aprendo contemporaneamente nuovi sigilli. In effetti, una caratteristica interessante del protocollo RGB è la sua capacità di scalare: diverse transizioni possono essere aggregate in un Transition Bundle, ogni aggregazione è associata a una foglia distinta dell'albero *MPC* (un identificatore unico del bundle). Grazie al meccanismo *Deterministic Bitcoin Commitment* (DBC), l'intero messaggio viene inserito in un'uscita `Tapret` o `Opret`, chiudendo i sigilli precedenti ed eventualmente definendone di nuovi. L'`Anchor` funge da collegamento diretto tra il commitment memorizzato nella blockchain e la struttura di validazione lato client (*client-side*).
 
 Nei capitoli seguenti verranno esaminati tutti i componenti e i processi coinvolti nella costruzione e nella convalida di una transizione di stato. La maggior parte di questi elementi fa parte del consenso RGB, implementato nella **RGB Core Library**.
 
@@ -1332,13 +1332,13 @@ Il **vecchio Stato** è referenziato tramite :
 Inoltre, un'Operazione a contratto include campi più generali specifici per l'operazione:
 
 
-- ffv` (*Versione di avanzamento rapido*): numero intero a 2 byte che indica la versione del contratto;
-- transitionType` o ExtensionType`: numero intero a 16 bit che specifica il tipo di transizione o di estensione, in base alla logica aziendale;
+- `ffv` (*Versione di avanzamento rapido*): numero intero a 2 byte che indica la versione del contratto;
+- `transitionType` o `ExtensionType`: numero intero a 16 bit che specifica il tipo di transizione o di estensione, in base alla logica aziendale;
 - `ContractId`: numero a 32 byte che si riferisce all'*OpId* del contratto Genesis. Incluso in Transizioni ed Estensioni, ma non in Genesis ;
-- schemaId: presente solo in Genesis, è un hash di 32 byte che rappresenta la struttura (*Schema*) del contratto;
-- testnet`: Booleano che indica se si è sulla rete Testnet o Mainnet. Solo Genesis;
-- altlayers1`: variabile che identifica il livello alternativo (sidechain o altro) usato per ancorare i dati oltre a Bitcoin. Presente solo in Genesis ;
-- metadata": campo che può memorizzare informazioni temporanee, utili per convalidare un contratto complesso, ma che non devono essere registrate nella cronologia dello stato finale.
+- `schemaId`: presente solo in Genesis, è un hash di 32 byte che rappresenta la struttura (*Schema*) del contratto;
+- `testnet`: Booleano che indica se si è sulla rete Testnet o Mainnet. Solo Genesis;
+- `altlayers1`: variabile che identifica il livello alternativo (sidechain o altro) usato per ancorare i dati oltre a Bitcoin. Presente solo in Genesis ;
+- `metadata`: campo che può memorizzare informazioni temporanee, utili per convalidare un contratto complesso, ma che non devono essere registrate nella cronologia dello stato finale.
 
 Infine, tutti questi campi sono condensati da un processo di hashing personalizzato, per produrre un'impronta digitale unica, l'`OpId`. Questo `OpId` viene quindi integrato nel bundle di transizione, consentendone l'autenticazione e la convalida all'interno del protocollo.
 
@@ -1416,7 +1416,7 @@ L'*Assegnazione* è la struttura di base per la definizione di :
 
 Un *Assignment* può essere visto come l'analogo di un output di una transazione Bitcoin, ma con maggiore flessibilità. Qui sta la logica del trasferimento di proprietà: l'*Assegnazione* associa un particolare tipo di bene o diritto (`AssignmentType`) a un sigillo. Chiunque possieda la chiave privata dell'UTXO collegato a questo sigillo (o chiunque possa spendere questo UTXO) è considerato proprietario di questo *Stato posseduto*.
 
-Uno dei grandi punti di forza di RGB è la possibilità di rivelare (*rivelare*) o nascondere (*nascondere*) i campi *Definizione del sigillo* e *Stato di proprietà* a piacimento. Ciò offre una potente combinazione di riservatezza e selettività. Ad esempio, è possibile dimostrare che una transizione è valida senza rivelare tutti i dati, fornendo la versione rivelata alla persona che deve convalidarla, mentre i terzi vedono solo la versione nascosta (un hash). In pratica, l'`OpId' di una transizione è sempre calcolato a partire dai dati *nascosti*.
+Uno dei grandi punti di forza di RGB è la possibilità di rivelare (*rivelare*) o nascondere (*nascondere*) i campi *Definizione del sigillo* e *Stato di proprietà* a piacimento. Ciò offre una potente combinazione di riservatezza e selettività. Ad esempio, è possibile dimostrare che una transizione è valida senza rivelare tutti i dati, fornendo la versione rivelata alla persona che deve convalidarla, mentre i terzi vedono solo la versione nascosta (un hash). In pratica, l'`OpId` di una transizione è sempre calcolato a partire dai dati *nascosti*.
 
 ![RGB-Bitcoin](assets/fr/067.webp)
 
@@ -1450,7 +1450,7 @@ RGB definisce quattro possibili tipi di stato (*StateTypes*) per uno Stato di pr
 
 
 - **Dichiarativo**: non contiene dati numerici, ma solo un diritto dichiarativo (ad esempio, il diritto di voto). Le forme nascoste e rivelate sono identiche;
-- **Fungibile**: rappresenta una quantità fungibile (come i gettoni). In forma rivelata, abbiamo `importo' e `marginatura'. In forma nascosta, abbiamo un singolo *impegno di Pedersen* che nasconde l'importo e l'accecamento;
+- **Fungibile**: rappresenta una quantità fungibile (come i gettoni). In forma rivelata, abbiamo `importo` e `marginatura`. In forma nascosta, abbiamo un singolo *impegno di Pedersen* che nasconde l'importo e l'accecamento;
 - **Strutturato**: memorizza dati strutturati (fino a 64 kB). In forma rivelata, è il blob di dati. In forma nascosta, è un hash etichettato di questo blob:
 
 ```txt
@@ -1521,8 +1521,8 @@ Attachments        | |     Tagged Hash      | | <========== | | File Hash | | Me
 Gli ingressi di una *Operazione contratto* si riferiscono agli *Assegnamenti* che vengono spesi in questa nuova operazione. Un ingresso indica :
 
 
-- prevOpId` : l'identificatore (`OpId`) dell'operazione precedente in cui si trovava l'*assegnazione*;
-- assignmentType` : il tipo di *Assignment* (ad esempio, `assetOwner` per un token) ;
+- `prevOpId` : l'identificatore (`OpId`) dell'operazione precedente in cui si trovava l'*assegnazione*;
+- `assignmentType` : il tipo di *Assignment* (ad esempio, `assetOwner` per un token) ;
 - `Index`: l'indice dell'*assegnazione* nell'elenco associato al precedente `OpId`, determinato dopo un ordinamento lessicografico dei sigilli nascosti.
 
 Gli ingressi non compaiono mai nella Genesi, poiché non esistono assegnazioni precedenti. Non compaiono nemmeno nelle Estensioni di stato (perché le Estensioni di stato non chiudono i sigilli, ma ridefiniscono nuovi sigilli in base alle Valenze).
@@ -2185,7 +2185,7 @@ Il campo `estensioni: nessuna!()` indica che in questo contratto non è prevista
 
 - (8) - **Transizioni: TS_TRANSFER**
 
-In `transizioni', definiamo il tipo di operazione `TS_TRANSFER'. Spieghiamo che :
+In `transizioni`, definiamo il tipo di operazione `TS_TRANSFER`. Spieghiamo che :
 
 
 - Non ha metadati;
@@ -2497,12 +2497,12 @@ Nella sezione `global_state`, troviamo campi come `spec` (descrizione dell'asset
 - `spec` mostrerà la configurazione del token;
 - `issuedSupply` o `burnedSupply` ci danno il numero totale di gettoni emessi o bruciati, ecc.
 
-Nella sezione `assegnazioni' si definiscono vari ruoli o diritti. Ad esempio:
+Nella sezione `assegnazioni` si definiscono vari ruoli o diritti. Ad esempio:
 
 
 - `assetOwner` corrisponde alla detenzione di gettoni (è lo stato fungibile *Owned State*) ;
 - `burnRight` corrisponde alla capacità di bruciare le pedine ;
-- updateRight` corrisponde al diritto di rinominare la risorsa.
+- `updateRight` corrisponde al diritto di rinominare la risorsa.
 
 La parola chiave `public` o `private` (ad esempio `AssignIface::public(...)`) indica se questi stati sono visibili (`public`) o riservati (`private`). Per quanto riguarda `Req::NoneOrMore`, `Req::Optional`, indicano l'occorrenza prevista.
 
@@ -2880,7 +2880,7 @@ Qui vediamo :
 
 - **`rgb:`**: Prefisso URL ;
 - **`7BKsac8-beMNMWA8r-3GEprtFh7-bjzEvGufY-aNLuU4nSN-MRsLOIK`**: ID contratto (NFT) ;
-- **rGB21**: interfaccia per beni non fungibili (NFT) ;
+- **`rGB21`**: interfaccia per beni non fungibili (NFT) ;
 - **`DbwzvSu-4BZU81jEp-...`**: un riferimento esplicito alla parte unica dell'NFT, ad esempio un hash del blob di dati (media, metadati...) ;
 - **`+utxob:egXsFnw-...`**: la definizione del sigillo.
 
@@ -3574,7 +3574,7 @@ Il codice è ancora in fase alfa: si consiglia di utilizzarlo solo in **regtest*
 
 ### Installazione dei nodi
 
-Per compilare e installare il binario `rgb-lightning-node', si inizia clonando il repository e i suoi sottomoduli, quindi si esegue il comando :
+Per compilare e installare il binario `rgb-lightning-node`, si inizia clonando il repository e i suoi sottomoduli, quindi si esegue il comando :
 
 ```bash
 git clone https://github.com/RGB-Tools/rgb-lightning-node --recurse-submodules --shallow-submodules
@@ -3599,7 +3599,7 @@ cargo install --locked --debug --path .
 - `--debug` non è obbligatorio, ma può aiutare a concentrarsi (si può usare `--release` se si preferisce);
 - `-percorso .` indica a `cargo install` di installare dalla directory corrente.
 
-Al termine di questo comando, un eseguibile `rgb-lightning-node' sarà disponibile nella cartella `$CARGO_HOME/bin/`. Assicurarsi che questo percorso sia presente in `$PATH`, in modo da poter invocare il comando da qualsiasi directory.
+Al termine di questo comando, un eseguibile `rgb-lightning-node` sarà disponibile nella cartella `$CARGO_HOME/bin/`. Assicurarsi che questo percorso sia presente in `$PATH`, in modo da poter invocare il comando da qualsiasi directory.
 
 ### Requisiti di prestazione
 
@@ -3721,9 +3721,9 @@ rgb-lightning-node dataldk2/ --daemon-listening-port 3003 \
 Per impostazione predefinita, se non viene trovata alcuna configurazione, il demone cercherà di utilizzare il file :
 
 
-- `bitcoind_rpc_host`: `electrum.iriswallet.com
-- `bitcoind_rpc_port`: `18332
-- indexer_url`: `ssl://electrum.iriswallet.com:50013`
+- `bitcoind_rpc_host`: `electrum.iriswallet.com`
+- `bitcoind_rpc_port`: `18332`
+- `indexer_url`: `ssl://electrum.iriswallet.com:50013`
 - `proxy_endpoint`: `rpcs://proxy.iriswallet.com/0.2/json-rpc`
 
 Con il login :
