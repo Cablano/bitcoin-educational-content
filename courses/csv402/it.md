@@ -92,7 +92,7 @@ L'informatica distribuita, una branca specifica dell'informatica, studia i proto
 
 
 - La **capacità di verifica e validazione indipendente** di alcuni dati da parte di ciascun nodo;
-- La possibilità per i nodi di costruire (a seconda del protocollo) una visione completa o parziale delle informazioni. Queste viste sono gli **stati** del sistema distribuito;
+- La possibilità per i nodi di costruire (a seconda del protocollo) una visione completa o parziale delle informazioni. Queste visioni sono gli **stati** del sistema distribuito;
 - L'**ordine cronologico** delle operazioni, in modo che i dati siano registrati in modo affidabile e che ci sia un consenso sulla sequenza degli eventi (sequenza di stati).
 
 In particolare, la nozione di **consenso** in un sistema distribuito copre due aspetti:
@@ -117,8 +117,8 @@ Per capire come la validazione lato client e l'RGB affrontino i problemi non ris
 
 
 - **Scalabilità, decentralizzazione, privacy** ;
-- Teorema **CAP** (consistenza, disponibilità, tolleranza partizione) ;
-- Trilemma **CIA** (Riservatezza, Integrità, Disponibilità).
+- Teorema **CAP** (Consistenza, Disponibilità, tolleranza Partizione) ;
+- Trilemma **CIA** (Confidenzialità, Integrità, Disponibilità).
 
 #### 1. Scalabilità, decentralizzazione e riservatezza
 
@@ -130,7 +130,7 @@ La blockchain è altamente decentralizzata, ma non è molto scalabile. Inoltre, 
 
 - **Lightning/canali di stato**
 
-I canali statali (come la Lightning Network) sono più scalabili e più privati della blockchain, poiché le transazioni avvengono fuori dalla catena. Tuttavia, l'obbligo di annunciare pubblicamente alcuni elementi (transazioni di finanziamento, topologia della rete) e il monitoraggio del traffico di rete possono in parte compromettere la riservatezza. Anche la decentralizzazione ne risente: il routing richiede molto denaro e i nodi principali possono diventare punti di centralizzazione. Questo è proprio il fenomeno che stiamo iniziando a vedere su Lightning.
+I canali statali (come in Lightning Network) sono più scalabili e più privati della blockchain, poiché le transazioni avvengono fuori dalla catena. Tuttavia, l'obbligo di annunciare pubblicamente alcuni elementi (transazioni di finanziamento, topologia della rete) e il monitoraggio del traffico di rete possono in parte compromettere la riservatezza. Anche la decentralizzazione ne risente: il routing richiede molto denaro e i nodi principali possono diventare punti di centralizzazione. Questo è proprio il fenomeno che stiamo iniziando a vedere su Lightning.
 
 
 - **Validazione lato client (RGB)**
@@ -233,7 +233,7 @@ Un *commitment* è un impegno crittografico, tipicamente un _hash_ (SHA-256 per 
 Grazie a questi _commitment_, possiamo dimostrare:
 
 
-- L'esistenza dell'informazione (poiché è impegnata in un hash) ;
+- L'esistenza dell'informazione (poiché è "committata" in un hash) ;
 - L'anteriorità di queste informazioni (perché ancorate e marcate temporalmente nella blockchain, con una data e un ordine di blocco).
 
 Il contenuto esatto, tuttavia, non viene rivelato, preservando così la sua riservatezza.
@@ -463,7 +463,7 @@ Mentre lavoravamo su RGB, abbiamo identificato almeno 4 modi diversi per impleme
 | Nome dello schema | Definizione del sigillo  | Chiusura del sigillo   | Requisiti aggiuntivi                                             | Applicazione principale    | Possibili schemi di commitment      |
 | ----------------- | ------------------------ | ---------------------- | ---------------------------------------------------------------- | -------------------------- | ---------------------------------- |
 | PkO               | Valore della chiave pubblica | Uscita della transazione | P2(W)PKH                                                      | Nessuna al momento        | Keytweak, taptweak, opret         |
-| TxO2              | Uscita della transazione    | Uscita della transazione | Richiede commitments deterministici su Bitcoin                     | RGBv1 (universale)        | Keytweak, tapret, opret           |
+| TxO2              | Uscita della transazione    | Uscita della transazione | Richiede deterministic Bitcoin commitments                      | RGBv1 (universale)        | Keytweak, tapret, opret           |
 | PkI               | Valore della chiave pubblica | Ingresso della transazione | Solo Taproot & non compatibile con portafogli legacy          | Identità basate su Bitcoin | Sigtweak, witweak                 |
 | TxO1              | Uscita della transazione    | Ingresso della transazione | Solo Taproot & non compatibile con portafogli legacy          | Nessuna al momento        | Sigtweak, witweak                 |
 
@@ -589,7 +589,7 @@ In pratica, **sig tweak** non è molto compatibile con l'hardware (portafogli ha
 Il **tweak della chiave** riprende il concetto storico di _pay-to-contract_. Prendiamo la chiave pubblica `X` e la modifichiamo aggiungendo il valore `H(messaggio)`. In particolare, se `X = x * G` e `h = H(messaggio)`, la nuova chiave sarà `X' = X + h * G`. Questa chiave modificata nasconde il commitment nei confronti del `messaggio`. Il detentore della chiave privata originale può, aggiungendo `h` alla sua chiave privata `x`, dimostrare di avere la chiave per spendere l'output. In teoria, questo è elegante, perché :
 
 
-- L'_impegno_ viene inserito senza aggiungere altri campi;
+- L'_commitment_ viene inserito senza aggiungere altri campi;
 - Non si memorizza alcun dato aggiuntivo sulla catena.
 
 In pratica, però, ci si scontra con le seguenti difficoltà:
@@ -625,7 +625,7 @@ OP_RETURN   OP_PUSHBYTE_32   <mpc::Commitment>
 
 ### Tapret
 
-L'ultima opzione è l'uso di **Taproot** (introdotto con BIP341) con lo schema *Tapret*. *Tapret* è una forma più complessa di impegno deterministico, che apporta miglioramenti in termini di ingombro sulla blockchain e di riservatezza per le operazioni contrattuali. L'idea principale è quella di nascondere il commitment nella parte `Script Path Spend` di una [taproot transaction] (https://github.com/bitcoin/bips/blob/master/bip-0341.mediawiki).
+L'ultima opzione è l'uso di **Taproot** (introdotto con BIP341) con lo schema *Tapret*. *Tapret* è una forma più complessa di commitment deterministico, che apporta miglioramenti in termini di ingombro sulla blockchain e di riservatezza per le operazioni contrattuali. L'idea principale è quella di nascondere il commitment nella parte `Script Path Spend` di una [taproot transaction] (https://github.com/bitcoin/bips/blob/master/bip-0341.mediawiki).
 
 ![RGB-Bitcoin](assets/fr/036.webp)
 
@@ -649,8 +649,8 @@ Quindi il metodo `Tapret` a 64 byte assomiglia a una `Opret` a cui abbiamo antep
 Per mantenere la flessibilità in termini di implementazione, riservatezza e scalabilità, lo schema Tapret tiene conto di diversi casi d'uso, a seconda dei requisiti:
 
 
-- Incorporazione unica di un impegno Tapret in una transazione Taproot senza una struttura Script Path preesistente;
-- Integrazione di un impegno Tapret in una transazione Taproot già dotata di Script Path.
+- Incorporazione unica di un commitment Tapret in una transazione Taproot senza una struttura Script Path preesistente;
+- Integrazione di un commitment Tapret in una transazione Taproot già dotata di Script Path.
 
 Analizziamo più da vicino ciascuno di questi due scenari.
 
@@ -665,7 +665,7 @@ In questo primo caso, si parte da una chiave di uscita taproot (*Taproot Output 
 - `G`: il punto di generazione della curva ellittica [secp256k1](https://en.bitcoin.it/wiki/Secp256k1).
 - `t = tH_TWEAK(P)` è il fattore di tweak, calcolato tramite un _tagged hash_ (ad esempio `SHA-256(SHA-256(TapTweak) || P)`), in accordo con [BIP86](https://github.com/bitcoin/bips/blob/master/bip-0086.mediawiki#address-derivation). Questo dimostra che non esiste uno script nascosto.
 
-Per includere un impegno **Tapret**, aggiungere un **Script Path Spend** con uno **scritto unico**, come segue:
+Per includere un commitment **Tapret**, aggiungere un **Script Path Spend** con uno **scritto unico**, come segue:
 
 ![RGB-Bitcoin](assets/fr/048.webp)
 
@@ -696,8 +696,8 @@ Per aggiungere il commitment di Tapret, dobbiamo inserire uno *scritto non spend
 Secondo le regole del taproot, ogni ramo/foglia deve essere combinato secondo un ordine lessicografico di hash. Ci sono due casi possibili:
 
 
-- `tHT` > `tHABC`: il commitment di Tapret si sposta a destra dell'albero. La prova di unicità richiede solo `tHABC` e `P` ;
-- `tHT` < `tHABC`**: il commitment Tapret è posto a sinistra. Per dimostrare che non esiste un altro impegno Tapret a destra, occorre rivelare `tHAB` e `tHC` per dimostrare l'assenza di un'altra scrittura di questo tipo.
+- **`tHT` > `tHABC`**: il commitment di Tapret si sposta a destra dell'albero. La prova di unicità richiede solo `tHABC` e `P` ;
+- **`tHT` < `tHABC`**: il commitment Tapret è posto a sinistra. Per dimostrare che non esiste un altro commitment Tapret a destra, occorre rivelare `tHAB` e `tHC` per dimostrare l'assenza di un'altra scrittura di questo tipo.
 
 Esempio visivo per il primo caso (`tHABC < tHT`):
 
@@ -711,23 +711,23 @@ Esempio per il secondo caso (`tHABC > tHT`):
 
 Per migliorare la riservatezza, possiamo "estrarre" (un termine più preciso sarebbe "bruteforcing") il valore della `<Nonce>` (l'ultimo byte del `Tapret` a 64 byte) nel tentativo di ottenere un hash `tHT` tale che `tHABC < tHT`. In questo caso, il commitment è posto a destra, evitando all'utente di dover divulgare l'intero contenuto di script esistenti per dimostrare l'unicità del Tapret.
 
-In sintesi, il `Tapret` offre un modo discreto e deterministico di incorporare un impegno in una transazione taproot, rispettando al contempo i requisiti di unicità e univocità essenziali per la logica di Client-side Validation e di sigillo monouso di RGB.
+In sintesi, il `Tapret` offre un modo discreto e deterministico di incorporare un commitment in una transazione taproot, rispettando al contempo i requisiti di unicità e univocità essenziali per la logica di Client-side Validation e di sigillo monouso di RGB.
 
 #### Uscite valide
 
-Per le transazioni con impegno RGB, il requisito principale per uno schema di impegno Bitcoin valido è il seguente: La transazione (*transazione testimone*) deve contenere un unico impegno. Questo requisito rende impossibile costruire una cronologia alternativa per i dati convalidati dal lato client all'interno della stessa transazione. Ciò significa che il messaggio attorno al quale si chiude il _single-use seal_ è unico.
+Per le transazioni con commitment RGB, il requisito principale per uno schema di commitment Bitcoin valido è il seguente: La transazione (*transazione testimone*) deve contenere un unico commitment. Questo requisito rende impossibile costruire una cronologia alternativa per i dati convalidati dal lato client all'interno della stessa transazione. Ciò significa che il messaggio attorno al quale si chiude il _single-use seal_ è unico.
 
-Per soddisfare questo principio, e indipendentemente dal numero di uscite in una transazione, si richiede che **una e una sola uscita** possa contenere un impegno (*impegno*). Per ciascuno degli schemi utilizzati (*Opret* o *Tapret*), le uniche uscite valide che possono contenere un _impegno_ RGB sono :
+Per soddisfare questo principio, e indipendentemente dal numero di uscite in una transazione, si richiede che **una e una sola uscita** possa contenere un commitment (*commitment*). Per ciascuno degli schemi utilizzati (*Opret* o *Tapret*), le uniche uscite valide che possono contenere un _commitment_ RGB sono :
 
 
 - Il primo output `OP_RETURN` (se presente) per lo schema *Opret*;
 - Il primo output taproot (se presente) per lo schema *Tapret*.
 
-Si noti che è possibile che una transazione contenga un singolo impegno `Opret` e un singolo impegno `Tapret` in due output separati. Grazie alla natura deterministica della Seal Definition, questi due commitments corrispondono a due dati distinti convalidati sul lato client.
+Si noti che è possibile che una transazione contenga un singolo commitment `Opret` e un singolo commitment `Tapret` in due output separati. Grazie alla natura deterministica della Seal Definition, questi due commitments corrispondono a due dati distinti convalidati sul lato client.
 
 ### Analisi e scelte pratiche in RGB
 
-Quando abbiamo avviato RGB, abbiamo esaminato tutti questi metodi per determinare dove e come inserire un _impegno_ in una transazione in modo deterministico. Abbiamo definito alcuni criteri:
+Quando abbiamo avviato RGB, abbiamo esaminato tutti questi metodi per determinare dove e come inserire un _commitment_ in una transazione in modo deterministico. Abbiamo definito alcuni criteri:
 
 - Compatibilità con diversi scenari (ad es. multisig, Lightning, portafogli hardware, ecc.);
 - Impatto sullo spazio della catena ;
@@ -743,7 +743,7 @@ Quando abbiamo avviato RGB, abbiamo esaminato tutti questi metodi per determinar
 | Algoritmo Tapret #4: qualsiasi nodo + prova       | 🟢                     | 🟠                 | 🟠                  | 🟢                     | 🔴 BOLT, 🟢 Bifrost | 🟢 Taproot, 🟢 MuSig |
 
 
-| Schema di impegno deterministico                          | Standard       | Costo on-chain                                                                                                       | Dimensione della prova lato client                                                                              |
+| Schema di commitment deterministico                          | Standard       | Costo on-chain                                                                                                       | Dimensione della prova lato client                                                                              |
 | --------------------------------------------------------- | -------------- | -------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------- |
 | Keytweak (P2C deterministico)                            | LNPBP-1, 2     | 0 byte                                                                                                              | 33 byte (chiave non modificata)                                                                                  |
 | Sigtweak (S2C deterministico)                            | WIP (LNPBP-39) | 0 byte                                                                                                              | 0 byte                                                                                                           |
@@ -784,7 +784,7 @@ Quando abbiamo avviato RGB, abbiamo esaminato tutti questi metodi per determinar
 
 
 
-Nel corso dello studio è emerso chiaramente che nessuno degli schemi di impegno era pienamente compatibile con l'attuale standard Lightning (che non utilizza Taproot, _muSig2_ o un supporto aggiuntivo per i commitments). Sono in corso sforzi per modificare la costruzione dei canali di Lightning (*BiFrost*) per consentire l'inserimento di commitments RGB. Questa è un'altra area in cui è necessario rivedere la struttura delle transazioni, le chiavi e il modo in cui gli aggiornamenti dei canali vengono firmati.
+Nel corso dello studio è emerso chiaramente che nessuno degli schemi di commitment era pienamente compatibile con l'attuale standard Lightning (che non utilizza Taproot, _muSig2_ o un supporto aggiuntivo per i commitments). Sono in corso sforzi per modificare la costruzione dei canali di Lightning (*BiFrost*) per consentire l'inserimento di commitments RGB. Questa è un'altra area in cui è necessario rivedere la struttura delle transazioni, le chiavi e il modo in cui gli aggiornamenti dei canali vengono firmati.
 
 L'analisi ha mostrato che, in realtà, altri metodi (key tweak, sig tweak, witness tweak, ecc.) presentavano altre forme di complicazione:
 
@@ -797,7 +797,7 @@ Per l'RGB, si distinguono due metodi in particolare: ***Opret*** e ***Tapret***,
 
 ### Commitments multiprotocollo - MPC
 
-In questa sezione, vediamo come **RGB** gestisce l'aggregazione di più contratti (o, più precisamente, dei loro _transition bundles_) all'interno di un singolo impegno (*commitment*) registrato in una transazione Bitcoin attraverso uno schema deterministico (secondo `Opret` o `Tapret`). Per ottenere questo risultato, l'ordine di Merkelizzazione dei vari contratti avviene in una struttura chiamata **albero MPC** (_Multi Protocol Commitment Tree_). In questa sezione vedremo la costruzione di questo albero MPC, come ottenere la sua radice e come più contratti possono condividere la stessa transazione in modo confidenziale e non ambiguo.
+In questa sezione, vediamo come **RGB** gestisce l'aggregazione di più contratti (o, più precisamente, dei loro _transition bundles_) all'interno di un singolo commitment (*commitment*) registrato in una transazione Bitcoin attraverso uno schema deterministico (secondo `Opret` o `Tapret`). Per ottenere questo risultato, l'ordine di Merkelizzazione dei vari contratti avviene in una struttura chiamata **albero MPC** (_Multi Protocol Commitment Tree_). In questa sezione vedremo la costruzione di questo albero MPC, come ottenere la sua radice e come più contratti possono condividere la stessa transazione in modo confidenziale e non ambiguo.
 
 il commitment multiprotocollo (MPC) è stato progettato per soddisfare due esigenze:
 
@@ -928,9 +928,9 @@ Questo meccanismo garantisce che :
 
 #### Sintesi della struttura dell'MPC
 
-Il Multi Protocol Commitment* (MPC) è il principio che consente a RGB di aggregare più contratti in un'unica transazione Bitcoin, mantenendo l'unicità dei commitments e la riservatezza nei confronti degli altri partecipanti. Grazie alla costruzione deterministica dell'albero, a ogni contratto viene assegnata una posizione unica e la presenza di foglie "fittizie" (*foglie di entropia*) maschera parzialmente il numero totale di contratti che partecipano alla transazione.
+Il *Multi Protocol Commitment* (MPC) è il principio che consente a RGB di aggregare più contratti in un'unica transazione Bitcoin, mantenendo l'unicità dei commitments e la riservatezza nei confronti degli altri partecipanti. Grazie alla costruzione deterministica dell'albero, a ogni contratto viene assegnata una posizione unica e la presenza di foglie "fittizie" (*foglie di entropia*) maschera parzialmente il numero totale di contratti che partecipano alla transazione.
 
-L'intero albero di Merkle non viene mai memorizzato sul client. Viene semplicemente generato un _percorso Merkle_ per ogni contratto interessato, da trasmettere al destinatario (che può quindi convalidare il commitment). In alcuni casi, si possono avere diverse attività che sono passate attraverso lo stesso UTXO. È quindi possibile unire diversi _tracciati Merkle_ in un cosiddetto _blocco di impegno multiprotocollo_, per evitare di duplicare troppi dati.
+L'intero albero di Merkle non viene mai memorizzato sul client. Viene semplicemente generato un _percorso Merkle_ per ogni contratto interessato, da trasmettere al destinatario (che può quindi convalidare il commitment). In alcuni casi, si possono avere diverse attività che sono passate attraverso lo stesso UTXO. È quindi possibile unire diversi _tracciati Merkle_ in un cosiddetto _blocco di commitment multiprotocollo_, per evitare di duplicare troppi dati.
 
 Ogni _prova di Merkle_ è quindi leggera, soprattutto perché la profondità dell'albero non supera i 32 in RGB. Esiste anche una nozione di "blocco Merkle", che conserva più informazioni (sezione trasversale, entropia, ecc.), utile per combinare o separare diversi rami.
 
@@ -938,7 +938,7 @@ Ecco perché ci è voluto così tanto tempo per finalizzare RGB. Avevamo la visi
 
 ### Ancore: un'assemblea globale
 
-Dopo aver costruito i nostri commitments (`Opret` o `Tapret`) e il nostro MPC (*Multi Protocol Commitment*), dobbiamo affrontare la nozione di **Anchor** nel protocollo RGB. Un Anchor è una struttura convalidata dal lato client che riunisce gli elementi necessari per verificare che un impegno Bitcoin contenga effettivamente informazioni contrattuali specifiche. In altre parole, un Anchor riassume tutti i dati necessari per convalidare gli _commitments_ descritti sopra.
+Dopo aver costruito i nostri commitments (`Opret` o `Tapret`) e il nostro MPC (*Multi Protocol Commitment*), dobbiamo affrontare la nozione di **Anchor** nel protocollo RGB. Un Anchor è una struttura convalidata dal lato client che riunisce gli elementi necessari per verificare che un commitment Bitcoin contenga effettivamente informazioni contrattuali specifiche. In altre parole, un Anchor riassume tutti i dati necessari per convalidare gli _commitments_ descritti sopra.
 
 Un'ancora è composta da tre campi ordinati:
 
@@ -947,7 +947,7 @@ Un'ancora è composta da tre campi ordinati:
 - prova MPC
 - prova di transazione extra - ETP
 
-Ognuno di questi campi svolge un ruolo nel processo di convalida, sia che si tratti di ricostruire la transazione Bitcoin sottostante, sia che si tratti di provare l'esistenza di un impegno nascosto (in particolare nel caso di `Tapret`).
+Ognuno di questi campi svolge un ruolo nel processo di convalida, sia che si tratti di ricostruire la transazione Bitcoin sottostante, sia che si tratti di provare l'esistenza di un commitment nascosto (in particolare nel caso di `Tapret`).
 
 #### TxId
 
@@ -974,22 +974,22 @@ Quindi, viene utilizzato uno schema di merkelizzazione deterministico per aggreg
 
 #### Prova di transazione extra - ETP
 
-Il terzo campo, il **ETP**, dipende dal tipo di impegno utilizzato. Se il commitment è di tipo `Opret`, non è richiesta alcuna prova aggiuntiva. Il validatore ispeziona il primo output `OP_RETURN` della transazione e trova il `mpc::Commitment` direttamente lì.
+Il terzo campo, il **ETP**, dipende dal tipo di commitment utilizzato. Se il commitment è di tipo `Opret`, non è richiesta alcuna prova aggiuntiva. Il validatore ispeziona il primo output `OP_RETURN` della transazione e trova il `mpc::Commitment` direttamente lì.
 
 **Se il commitment è di tipo `Tapret`**, deve essere fornita una prova aggiuntiva chiamata *Extra Transaction Proof - ETP*. Essa contiene :
 
 
 - La chiave pubblica interna (`P`) dell'output taproot in cui è incorporato il *commitment*;
 - I nodi partner dello `Script Path Spend` (quando il Tapret *commitment* è inserito in uno script), per dimostrare l'esatta posizione di questo script nell'albero delle radici:
- - Se il `Tapret` *impegno* è sul ramo destro, riveliamo il nodo sinistro (ad esempio `tHABC`),
- - Se l'*impegno* di `Tapret` è a sinistra, è necessario rivelare 2 nodi (ad esempio `tHAB` e `tHC`) per dimostrare che nessun altro *impegno* è presente sul lato destro.
-- Il `nonce` può essere usato per "estrarre" la configurazione migliore, consentendo al *impegno* di essere collocato a destra dell'albero (ottimizzazione della prova).
+ - Se il `Tapret` *commitment* è sul ramo destro, riveliamo il nodo sinistro (ad esempio `tHABC`),
+ - Se il *commitment* di `Tapret` è a sinistra, è necessario rivelare 2 nodi (ad esempio `tHAB` e `tHC`) per dimostrare che nessun altro *commitment* è presente sul lato destro.
+- Il `nonce` può essere usato per "estrarre" la configurazione migliore, consentendo al *commitment* di essere collocato a destra dell'albero (ottimizzazione della prova).
 
-Questa prova aggiuntiva è essenziale perché, a differenza di `Opret`, il commitment di `Tapret` è integrato nella struttura di uno script taproot, che richiede la rivelazione di parte dell'albero taproot per validare correttamente la posizione dell'*impegno*.
+Questa prova aggiuntiva è essenziale perché, a differenza di `Opret`, il commitment di `Tapret` è integrato nella struttura di uno script taproot, che richiede la rivelazione di parte dell'albero taproot per validare correttamente la posizione del *commitment*.
 
 ![RGB-Bitcoin](assets/fr/045.webp)
 
-Gli **Anchors** incapsulano quindi tutte le informazioni necessarie per convalidare un impegno Bitcoin nel contesto di RGB. Indicano sia la transazione pertinente (`Txid`) che la prova del posizionamento del contratto (`MPC Proof`), mentre gestiscono la prova aggiuntiva (`ETP`) nel caso di `Tapret`. In questo modo, un Anchor protegge l'integrità e l'unicità dello stato fuori catena, garantendo che la stessa transazione non possa essere reinterpretata per altri dati contrattuali.
+Gli **Anchors** incapsulano quindi tutte le informazioni necessarie per convalidare un commitment Bitcoin nel contesto di RGB. Indicano sia la transazione pertinente (`Txid`) che la prova del posizionamento del contratto (`MPC Proof`), mentre gestiscono la prova aggiuntiva (`ETP`) nel caso di `Tapret`. In questo modo, un Anchor protegge l'integrità e l'unicità dello stato fuori catena, garantendo che la stessa transazione non possa essere reinterpretata per altri dati contrattuali.
 
 ### Conclusione
 
@@ -1134,7 +1134,7 @@ Bob invia ad Alice informazioni codificate sotto forma di ***fattura*** (approfo
 
 **Preparazione della transazione campione:**
 
-Alice crea quindi una transazione Bitcoin spendendo l'UTXO a cui si è fatto riferimento nel sigillo precedente (quello che l'ha legittimata come titolare). Nell'output di questa transazione, viene inserito un *impegno* (tramite `Opret` o `Tapret`) per ancorare il nuovo stato RGB. I commitments `Opret` o `Tapret` sono derivati da un *albero MPC* (come visto nei capitoli precedenti), che può aggregare diverse transizioni da contratti diversi.
+Alice crea quindi una transazione Bitcoin spendendo l'UTXO a cui si è fatto riferimento nel sigillo precedente (quello che l'ha legittimata come titolare). Nell'output di questa transazione, viene inserito un *commitment* (tramite `Opret` o `Tapret`) per ancorare il nuovo stato RGB. I commitments `Opret` o `Tapret` sono derivati da un *albero MPC* (come visto nei capitoli precedenti), che può aggregare diverse transizioni da contratti diversi.
 
 **Trasmissione di *Consegna* a Bob:**
 
@@ -1183,7 +1183,7 @@ Una volta raccolte, queste transizioni sono ancorate (dal meccanismo MPC + DBC) 
 
 - Ogni transizione di stato viene sottoposta a hash e raggruppata in un fascio di transizioni;
 - Il bundle di transizione è a sua volta sottoposto a hashing e inserito nella foglia dell'albero MPC corrispondente a questo contratto (un BundleId);
-- L'albero MPC viene infine impegnato tramite `Opret` o `Tapret` nella transazione testimone, che chiude i sigilli consumati e definisce i nuovi sigilli.
+- L'albero MPC viene infine "committato" tramite `Opret` o `Tapret` nella transazione testimone, che chiude i sigilli consumati e definisce i nuovi sigilli.
 
 Tecnicamente, il **BundleId** inserito nel foglio MPC è ottenuto da un hash taggato applicato alla serializzazione rigorosa del campo *InputMap* del bundle:
 
@@ -1342,7 +1342,7 @@ Inoltre, un'Operazione a contratto include campi più generali specifici per l'o
 
 Infine, tutti questi campi sono condensati da un processo di hashing personalizzato, per produrre un'impronta digitale unica, l'`OpId`. Questo `OpId` viene quindi integrato nel bundle di transizione, consentendone l'autenticazione e la convalida all'interno del protocollo.
 
-Ogni *operazione contrattuale* è quindi identificata da un hash di 32 byte denominato `OpId`. Questo hash è calcolato mediante un hash SHA256 di tutti gli elementi che compongono l'operazione. In altre parole, ogni *Operazione contrattuale* ha un proprio impegno crittografico, che include tutti i dati necessari per verificare l'autenticità e la coerenza dell'operazione.
+Ogni *operazione contrattuale* è quindi identificata da un hash di 32 byte denominato `OpId`. Questo hash è calcolato mediante un hash SHA256 di tutti gli elementi che compongono l'operazione. In altre parole, ogni *Operazione contrattuale* ha un proprio commitment crittografico, che include tutti i dati necessari per verificare l'autenticità e la coerenza dell'operazione.
 
 Un contratto RGB è quindi identificato da un `ContractId`, derivato dall'`OpId` di Genesis (poiché non esiste un'operazione precedente a Genesis). In concreto, prendiamo l'`OpId` di Genesis, invertiamo l'ordine dei byte e applichiamo una codifica Base58. Questa codifica rende il `ContractId` più facile da gestire e riconoscere.
 
@@ -1450,7 +1450,7 @@ RGB definisce quattro possibili tipi di stato (*StateTypes*) per uno Stato di pr
 
 
 - **Dichiarativo**: non contiene dati numerici, ma solo un diritto dichiarativo (ad esempio, il diritto di voto). Le forme nascoste e rivelate sono identiche;
-- **Fungibile**: rappresenta una quantità fungibile (come i gettoni). In forma rivelata, abbiamo `importo` e `marginatura`. In forma nascosta, abbiamo un singolo *impegno di Pedersen* che nasconde l'importo e l'accecamento;
+- **Fungibile**: rappresenta una quantità fungibile (come i gettoni). In forma rivelata, abbiamo `importo` e `marginatura`. In forma nascosta, abbiamo un singolo *commitment di Pedersen* che nasconde l'importo e l'accecamento;
 - **Strutturato**: memorizza dati strutturati (fino a 64 kB). In forma rivelata, è il blob di dati. In forma nascosta, è un hash etichettato di questo blob:
 
 ```txt
@@ -1667,7 +1667,7 @@ Un Anchor rappresenta un insieme di dati lato client utilizzati per dimostrare l
 - L'identificativo della transazione Bitcoin (TXID) della **transazione testimone** ;
 - Il **Multi Protocol Commitment (MPC)** ;
 - Il **Deterministic Bitcoin Commitment (DBC)**;
-- La **Extra Transaction Proof (ETP)** se si utilizza il meccanismo di impegno **Tapret** (si veda la sezione dedicata a questo modello).
+- La **Extra Transaction Proof (ETP)** se si utilizza il meccanismo di commitment **Tapret** (si veda la sezione dedicata a questo modello).
 
 Un Anchor serve quindi a stabilire un legame verificabile tra una specifica transazione Bitcoin e i dati privati convalidati dal protocollo RGB. Garantisce che questi dati siano effettivamente inclusi nella blockchain, senza che il loro contenuto esatto sia esposto pubblicamente.
 
@@ -1689,9 +1689,9 @@ La Business Logic raggruppa tutte le regole e le operazioni interne di un contra
 
 La Client-side Validation si riferisce al processo con cui ogni parte (client) verifica un insieme di dati scambiati privatamente, secondo le regole di un protocollo. Nel caso di RGB, questi dati scambiati sono raggruppati in quelli che sono noti come **conferimenti**. A differenza del protocollo Bitcoin, che richiede la pubblicazione di tutte le transazioni sulla catena, RGB consente di memorizzare pubblicamente solo gli _commitments_ (ancorati in Bitcoin), mentre le informazioni essenziali del contratto (transizioni, attestazioni, prove) rimangono fuori dalla catena, condivise solo tra gli utenti interessati.
 
-#### Impegno
+#### commitment
 
-Un impegno (in senso crittografico) è un oggetto matematico, indicato con `C`, derivato deterministicamente da un'operazione su dati strutturati `m` (il messaggio) e un valore casuale `r`. Scriviamo :
+Un commitment (in senso crittografico) è un oggetto matematico, indicato con `C`, derivato deterministicamente da un'operazione su dati strutturati `m` (il messaggio) e un valore casuale `r`. Scriviamo :
 
 $$
 C = \text{commit}(m, r)
@@ -1701,9 +1701,9 @@ Questo meccanismo comprende due operazioni principali:
 
 
 - **Commit**: una funzione crittografica viene applicata a un messaggio `m` e a un numero casuale `r` per produrre `C` ;
-- **Verify**: si utilizza `C`, il messaggio `m` e il valore `r` per verificare che questo impegno sia corretto. La funzione restituisce `Vero` o `Falso`.
+- **Verify**: si utilizza `C`, il messaggio `m` e il valore `r` per verificare che questo commitment sia corretto. La funzione restituisce `Vero` o `Falso`.
 
-Un impegno deve rispettare due proprietà:
+Un commitment deve rispettare due proprietà:
 
 
 - **Binding**: deve essere impossibile trovare due messaggi diversi che producano la stessa `C` :
@@ -1721,7 +1721,7 @@ $$
 
 - **Nascondere**: la conoscenza di `C` non deve rivelare il contenuto di `m`.
 
-Nel protocollo RGB, un impegno è incluso in una transazione Bitcoin per dimostrare l'esistenza di una certa informazione in un determinato momento, senza rivelare l'informazione stessa.
+Nel protocollo RGB, un commitment è incluso in una transazione Bitcoin per dimostrare l'esistenza di una certa informazione in un determinato momento, senza rivelare l'informazione stessa.
 
 #### In conto vendita
 
@@ -1774,15 +1774,15 @@ Lo Stato del contratto corrisponde allo stato attuale di un contratto in un dete
 - Lo **Stato globale**, che include le proprietà pubbliche del contratto (impostate in Genesis o aggiunte tramite aggiornamenti autorizzati);
 - **Stati di proprietà**, che appartengono a proprietari specifici, identificati dai loro UTXO.
 
-#### Impegno deterministico di Bitcoin - DBC
+#### Deterministic Bitcoin Commitments - DBC
 
-Il Deterministic Bitcoin Commitment (DBC) è l'insieme di regole utilizzate per registrare in modo certo e univoco un _impegno_ in una transazione Bitcoin. Nel protocollo RGB, esistono due forme principali di DBC:
+Il Deterministic Bitcoin Commitment (DBC) è l'insieme di regole utilizzate per registrare in modo certo e univoco un _commitment_ in una transazione Bitcoin. Nel protocollo RGB, esistono due forme principali di DBC:
 
 
 - **Opret**
 - **Tapret**
 
-Questi meccanismi definiscono con precisione il modo in cui il commitment viene codificato nell'output o nella struttura di una transazione Bitcoin, per garantire che tale impegno sia deterministicamente tracciabile e verificabile.
+Questi meccanismi definiscono con precisione il modo in cui il commitment viene codificato nell'output o nella struttura di una transazione Bitcoin, per garantire che tale commitment sia deterministicamente tracciabile e verificabile.
 
 #### Grafico aciclico diretto - DAG
 
@@ -1796,7 +1796,7 @@ L'incisione è una stringa di dati opzionale che i proprietari successivi di un 
 
 #### Prova di transazione extra - ETP
 
-L'ETP (*Extra Transaction Proof*) è la parte dell'Anchor che contiene i dati aggiuntivi necessari per convalidare un *impegno* di un **Tapret** (nel contesto di _taproot_). Include, tra l'altro, la chiave pubblica interna dello script taproot (_internal PubKey_) e informazioni specifiche del _Script Path Spend_.
+L'ETP (*Extra Transaction Proof*) è la parte dell'Anchor che contiene i dati aggiuntivi necessari per convalidare un *commitment* di un **Tapret** (nel contesto di _taproot_). Include, tra l'altro, la chiave pubblica interna dello script taproot (_internal PubKey_) e informazioni specifiche del _Script Path Spend_.
 
 #### Genesi
 
@@ -1826,7 +1826,7 @@ Per maggiori informazioni sul funzionamento di Lightning, vi consiglio di seguir
 
 https://planb.network/courses/34bd43ef-6683-4a5c-b239-7cb1e40a4aeb
 
-#### Impegno multiprotocollo - MPC
+#### Commitment MultiProtocollo - MPC
 
 Multi Protocol Commitment (MPC) si riferisce alla struttura ad albero di Merkle utilizzata in RGB per includere, all'interno di una singola transazione Bitcoin, diversi **Transition Bundles** provenienti da contratti diversi. L'idea è quella di raggruppare diversi commitments (potenzialmente corrispondenti a diversi contratti o a diverse attività) in un unico punto di ancoraggio per ottimizzare l'occupazione dello spazio dei blocchi.
 
@@ -1844,9 +1844,9 @@ Una PSBT (_Partially Signed Bitcoin Transaction_) è una transazione Bitcoin non
 
 Per ulteriori informazioni: [BIP-0174](https://github.com/bitcoin/bips/blob/master/bip-0174.mediawiki)
 
-#### Impegno di Pedersen
+#### Commitment di Pedersen
 
-Un impegno Pedersen è un tipo di impegno crittografico con la proprietà di essere **omorfo** rispetto all'operazione di addizione. Ciò significa che è possibile convalidare la somma di due commitments senza rivelare i singoli valori.
+Un commitment Pedersen è un tipo di commitment crittografico con la proprietà di essere **omorfo** rispetto all'operazione di addizione. Ciò significa che è possibile convalidare la somma di due commitments senza rivelare i singoli valori.
 
 Formalmente, se :
 
@@ -1874,7 +1874,7 @@ Uno Schema in RGB è un pezzo di codice dichiarativo che descrive l'insieme di v
 
 #### Definizione di sigillo
 
-La Definizione del sigillo è la parte di un'assegnazione che associa l'_impegno_ a un UTXO di proprietà del nuovo titolare. In altre parole, indica dove si trova la condizione (in quale UTXO) e stabilisce la proprietà di un bene o di un diritto.
+La Definizione del sigillo è la parte di un'assegnazione che associa il _commitment_ a un UTXO di proprietà del nuovo titolare. In altre parole, indica dove si trova la condizione (in quale UTXO) e stabilisce la proprietà di un bene o di un diritto.
 
 #### Frammento
 
@@ -1882,7 +1882,7 @@ Uno Shard rappresenta un ramo nel DAG della storia delle transizioni di stato di
 
 #### Sigillo monouso
 
-Un sigillo monouso è una promessa crittografica di impegno per un messaggio ancora sconosciuto, che sarà rivelato solo una volta in futuro e deve essere conosciuto da tutti i membri di un pubblico specifico. Lo scopo è quello di impedire la creazione di più commitments concorrenti per lo stesso sigillo.
+Un sigillo monouso è una promessa crittografica di un commitment per un messaggio ancora sconosciuto, che sarà rivelato solo una volta in futuro e deve essere conosciuto da tutti i membri di un pubblico specifico. Lo scopo è quello di impedire la creazione di più commitments concorrenti per lo stesso sigillo.
 
 #### Stash
 
@@ -1918,7 +1918,7 @@ Una Valenza è un diritto pubblico che non richiede la conservazione dello Stato
 
 #### Testimonianza di transazione
 
-La transazione del testimone è la transazione Bitcoin che chiude il sigillo monouso attorno a un messaggio contenente un impegno multiprotocollo (MPC). Questa transazione spende un UTXO o ne crea uno, in modo da sigillare il commitment legato al protocollo RGB. Agisce come prova sulla catena che lo stato è stato impostato in un momento specifico.
+La transazione del testimone è la transazione Bitcoin che chiude il sigillo monouso attorno a un messaggio contenente un commitment multiprotocollo (MPC). Questa transazione spende un UTXO o ne crea uno, in modo da sigillare il commitment legato al protocollo RGB. Agisce come prova sulla catena che lo stato è stato impostato in un momento specifico.
 
 # Programmazione su RGB
 
@@ -3213,7 +3213,7 @@ Nel prossimo capitolo vedremo da vicino l'integrazione di RGB nella rete Lightni
 
 In questo capitolo propongo di esaminare come RGB possa essere utilizzato all'interno della Lightning Network, per integrare e muovere asset RGB (token, NFT, ecc.) attraverso canali di pagamento fuori dalla catena.
 
-L'idea di base è che la transizione di stato RGB (*Transizione di stato*) può essere impegnata in una transazione Bitcoin che, a sua volta, può rimanere fuori dalla catena fino alla chiusura del canale Lightning. Quindi, ogni volta che il canale viene aggiornato, una nuova transizione di stato RGB può essere incorporata nella nuova transazione impegnata, che invalida la vecchia transizione. In questo modo, i canali Lightning possono essere utilizzati per trasferire beni RGB e possono essere instradati nello stesso modo dei pagamenti Lightning convenzionali.
+L'idea di base è che la transizione di stato RGB (*Transizione di stato*) può essere committata in una transazione Bitcoin che, a sua volta, può rimanere fuori dalla catena fino alla chiusura del canale Lightning. Quindi, ogni volta che il canale viene aggiornato, una nuova transizione di stato RGB può essere incorporata nella nuova transazione committata, che invalida la vecchia transizione. In questo modo, i canali Lightning possono essere utilizzati per trasferire beni RGB e possono essere instradati nello stesso modo dei pagamenti Lightning convenzionali.
 
 ### Creazione di canali e finanziamenti
 
@@ -3223,33 +3223,33 @@ Per creare un canale Lightning che trasporta risorse RGB, abbiamo bisogno di due
 - Finanziamento Bitcoin per creare il multisig del canale 2/2 (l'UTXO di base per il canale);
 - Finanziamento RGB, che invia le risorse allo stesso multisig.
 
-In termini di Bitcoin, la transazione di finanziamento deve esistere per definire l'UTXO di riferimento, anche se contiene solo una piccola quantità di sats (si tratta solo di far sì che ogni uscita nelle future transazioni di impegno rimanga comunque al di sopra del limite di polvere). Ad esempio, Alice potrebbe decidere di fornire 10k sats e 500 USDT (emessi come asset RGB). Nella transazione di finanziamento, aggiungiamo un impegno (`Opret` o `Tapret`) che fissa la transizione di stato di RGB.
+In termini di Bitcoin, la transazione di finanziamento deve esistere per definire l'UTXO di riferimento, anche se contiene solo una piccola quantità di sats (si tratta solo di far sì che ogni uscita nelle future transazioni di commitment rimanga comunque al di sopra del limite di polvere). Ad esempio, Alice potrebbe decidere di fornire 10k sats e 500 USDT (emessi come asset RGB). Nella transazione di finanziamento, aggiungiamo un commitment (`Opret` o `Tapret`) che fissa la transizione di stato di RGB.
 
 ![RGB-Bitcoin](assets/fr/091.webp)
 
-Una volta che la transazione di finanziamento è stata preparata (ma non ancora trasmessa), vengono create transazioni di impegno in modo che una delle parti possa chiudere il canale unilateralmente in qualsiasi momento. Queste transazioni assomigliano alle transazioni di impegno classiche di Lightning, tranne per il fatto che aggiungiamo un'uscita supplementare contenente l'ancora RGB (OP_RETURN o Taproot) legata alla nuova transizione di stato.
+Una volta che la transazione di finanziamento è stata preparata (ma non ancora trasmessa), vengono create transazioni di commitment in modo che una delle parti possa chiudere il canale unilateralmente in qualsiasi momento. Queste transazioni assomigliano alle transazioni di commitment classiche di Lightning, tranne per il fatto che aggiungiamo un'uscita supplementare contenente l'ancora RGB (OP_RETURN o Taproot) legata alla nuova transizione di stato.
 
-La transizione di stato RGB sposta quindi le attività dal multisigma 2/2 del finanziamento agli output della transazione di impegno. Il vantaggio di questo processo è che la sicurezza dello stato RGB corrisponde esattamente alla meccanica punitiva di Lightning: se Bob trasmette uno stato di canale vecchio, Alice può punirlo e spendere l'output, per recuperare sia la saturazione che i gettoni RGB. L'incentivo è quindi ancora più forte che in un canale Lightning senza risorse RGB, poiché un attaccante può perdere non solo la saturazione, ma anche le risorse RGB del canale.
+La transizione di stato RGB sposta quindi le attività dal multisigma 2/2 del finanziamento agli output della transazione di commitment. Il vantaggio di questo processo è che la sicurezza dello stato RGB corrisponde esattamente alla meccanica punitiva di Lightning: se Bob trasmette uno stato di canale vecchio, Alice può punirlo e spendere l'output, per recuperare sia la saturazione che i gettoni RGB. L'incentivo è quindi ancora più forte che in un canale Lightning senza risorse RGB, poiché un attaccante può perdere non solo la saturazione, ma anche le risorse RGB del canale.
 
-Una transazione di impegno firmata da Alice e inviata a Bob avrebbe quindi il seguente aspetto:
+Una transazione di commitment firmata da Alice e inviata a Bob avrebbe quindi il seguente aspetto:
 
 ![RGB-Bitcoin](assets/fr/092.webp)
 
-La transazione di impegno che la accompagna, firmata da Bob e inviata ad Alice, avrà il seguente aspetto:
+La transazione di commitment che la accompagna, firmata da Bob e inviata ad Alice, avrà il seguente aspetto:
 
 ![RGB-Bitcoin](assets/fr/093.webp)
 
 ### Aggiornamento del canale
 
-Quando si verifica un pagamento tra due partecipanti al canale (o questi desiderano modificare l'allocazione delle attività), essi creano una nuova coppia di transazioni di impegno. L'importo in sats di ciascuna uscita può rimanere invariato o meno, a seconda dell'implementazione, poiché il suo ruolo principale è quello di consentire la costruzione di UTXO validi. D'altra parte, l'uscita OP_RETURN (o Taproot) deve essere modificata per contenere la nuova ancora RGB, che rappresenta la nuova distribuzione degli asset nel canale.
+Quando si verifica un pagamento tra due partecipanti al canale (o questi desiderano modificare l'allocazione delle attività), essi creano una nuova coppia di transazioni di commitment. L'importo in sats di ciascuna uscita può rimanere invariato o meno, a seconda dell'implementazione, poiché il suo ruolo principale è quello di consentire la costruzione di UTXO validi. D'altra parte, l'uscita OP_RETURN (o Taproot) deve essere modificata per contenere la nuova ancora RGB, che rappresenta la nuova distribuzione degli asset nel canale.
 
 Ad esempio, se Alice trasferisce 30 USDT a Bob nel canale, la nuova transizione di stato rifletterà un saldo di 400 USDT per Alice e 100 USDT per Bob. La transazione di commit viene aggiunta (o modificata) all'ancora OP_RETURN/Taproot per includere questa transizione. Si noti che, dal punto di vista di RGB, l'input della transizione rimane il multisig iniziale (dove le attività sulla catena sono effettivamente allocate fino alla chiusura del canale). Solo le uscite di RGB (allocazioni) cambiano, a seconda della ridistribuzione decisa.
 
-La transazione di impegno firmata da Alice, pronta per essere distribuita da Bob :
+La transazione di commitment firmata da Alice, pronta per essere distribuita da Bob :
 
 ![RGB-Bitcoin](assets/fr/094.webp)
 
-La transazione di impegno firmata da Bob, pronta per essere distribuita da Alice :
+La transazione di commitment firmata da Bob, pronta per essere distribuita da Alice :
 
 ![RGB-Bitcoin](assets/fr/095.webp)
 
@@ -3285,7 +3285,7 @@ Gestione della convalida fuori catena e della logica dei sigilli monouso.
 
 Gestione dell'ancoraggio deterministico nelle transazioni Bitcoin (Tapret, OP_RETURN, ecc.).
 
-#### Impegno multiprotocollo (MPC)
+#### Commitment Multiprotocollo (MPC)
 
 
 - **Repository**: [client_side_validation](https://github.com/LNP-BP/client_side_validation)
@@ -3507,7 +3507,7 @@ Un altro punto chiave del lavoro del team di Bitfinex è quello di rendere la re
 
 
 - Aprire un canale inserendo non solo i satoshi, ma anche uno o più asset RGB nel multisigma UTXO di finanziamento;
-- Generare transazioni di impegno Lightning (lato Bitcoin) accompagnate dalle corrispondenti transizioni di stato RGB. Ogni volta che il canale viene aggiornato, una transizione RGB ridefinisce la distribuzione delle attività nelle uscite di Lightning;
+- Generare transazioni di commitment Lightning (lato Bitcoin) accompagnate dalle corrispondenti transizioni di stato RGB. Ogni volta che il canale viene aggiornato, una transizione RGB ridefinisce la distribuzione delle attività nelle uscite di Lightning;
 - Abilitare la chiusura unilaterale, in cui il bene viene recuperato in un UTXO esclusivo, in conformità con le regole della rete Lightning (HTLC, timelock, punizione, ecc.).
 
 Questa soluzione, denominata "**RGB Lightning Node**", utilizza LDK (*Lightning Dev Kit*) come base e aggiunge i meccanismi necessari per iniettare token RGB nei canali. I commitments di Lightning mantengono la struttura classica (uscite perforabili, timelock...), e in aggiunta ancorano una transizione di stato RGB (tramite `Opret` o `Tapret`). Per l'utente, questo apre la strada ai canali Lightning in stablecoin o in qualsiasi altro asset emesso via RGB.
@@ -3568,7 +3568,7 @@ Il progetto **`rgb-lightning-node`** è un demone Rust basato su un fork di `rus
 
 - Aprire canali Lightning in USDT, ad esempio;
 - Instradare questi gettoni attraverso la rete, a condizione che i percorsi di instradamento abbiano una liquidità sufficiente;
-- Sfruttare la logica di punizione e di timelock di Lightning senza modifiche: basta ancorare la transizione RGB in un'uscita aggiuntiva della transazione di impegno.
+- Sfruttare la logica di punizione e di timelock di Lightning senza modifiche: basta ancorare la transizione RGB in un'uscita aggiuntiva della transazione di commitment.
 
 Il codice è ancora in fase alfa: si consiglia di utilizzarlo solo in **regtest** o su **testnet**.
 
@@ -3829,7 +3829,7 @@ Per saperne di più, cliccate qui:
 - `capacità_sat`: Capacità totale del canale in satoshi ;
 - `push_msat`: Importo in millisatoshi inizialmente trasferito al peer quando il canale viene aperto (qui trasferisco immediatamente 10.000 sats in modo che possa fare un trasferimento RGB più tardi) ;
 - `asset_amount`: Quantità di risorse RGB da impegnare nel canale ;
-- `asset_id` : identificatore univoco dell'asset RGB impegnato nel canale;
+- `asset_id` : identificatore univoco dell'asset RGB "committato" nel canale;
 - `pubblico`: Indica se il canale deve essere reso pubblico per l'instradamento sulla rete.
 
 ![RGB-Bitcoin](assets/fr/111.webp)
@@ -3903,7 +3903,7 @@ Ecco come distribuire un nodo Lightning modificato per trasportare risorse RGB. 
 Grazie a questo processo :
 
 
-- Le transazioni con impegno lightning includono un'uscita aggiuntiva (OP_RETURN o Taproot) con l'ancoraggio di una transizione RGB;
+- Le transazioni con commitment lightning includono un'uscita aggiuntiva (OP_RETURN o Taproot) con l'ancoraggio di una transizione RGB;
 - I trasferimenti vengono effettuati esattamente come i tradizionali pagamenti Lightning, ma con l'aggiunta di un token RGB;
 - Più nodi RLN possono essere collegati per instradare e sperimentare pagamenti attraverso più nodi, a condizione che ci sia sufficiente liquidità sia in bitcoin che in asset RGB sul percorso.
 
